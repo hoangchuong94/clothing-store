@@ -1,0 +1,199 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_URL") 
+  directUrl = env("POSTGRES_URL_NON_POOLING") 
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model User {
+  id                String        @default(cuid()) @id
+  name              String?          
+  email             String?       @unique
+  emailVerified     DateTime?     @map("email_verified")
+  password          String?
+  image             String? 
+  createdAt         DateTime      @default(now()) @map(name: "created_at")
+  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
+  role              UserRole      @default(USER) 
+  accounts          Account[]
+  sessions      Session[]
+
+  @@map(name: "users")
+}
+
+model Account {
+  id                String        @id @default(cuid())
+  userId            String        @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String        @map("provider_account_id")
+  refresh_token     String?       @db.Text
+  access_token      String?       @db.Text
+  expires_at        Int?          
+  token_type        String?
+  scope             String?
+  id_token          String?       @db.Text
+  session_state     String?
+  createdAt         DateTime      @default(now()) @map(name: "created_at")
+  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  id String @id @default(cuid())
+  email String
+  token String @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model Category {
+  id                String        @id @default(cuid())
+  name              String
+  createdAt         DateTime      @default(now()) @map(name: "created_at")
+  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
+  subCategories     SubCategory[]
+
+  @@map("categories")
+  @@unique([name])
+}
+
+model SubCategory {
+  id                String        @id @default(cuid())
+  name              String
+  createdAt         DateTime      @default(now()) @map(name: "created_at")
+  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
+  categoryId        String        @map("category_id")
+  category          Category      @relation(fields: [categoryId], references: [id])
+  detailCategories  DetailCategory[]
+
+  @@map("sub_categories")
+}
+
+model DetailCategory {
+  id            String     @id @default(cuid())
+  name          String
+  createdAt     DateTime   @default(now()) @map(name: "created_at")
+  updatedAt     DateTime   @updatedAt @map(name: "updated_at")
+  subCategoryId String     @map("sub_category_id")
+  subCategory   SubCategory @relation(fields: [subCategoryId], references: [id])
+  products      Product[]  // Một DetailCategory có thể có nhiều Product
+
+  @@map("detail_categories")
+}
+
+model Product {
+  id                String        @id @default(cuid())
+  name              String
+  description       String
+  type              String
+  price             Float
+  quantity          Int
+  capacity          Int
+  thumbnail         String
+  createdAt         DateTime      @default(now()) @map(name: "created_at")
+  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
+  detailCategoryId  String        @map("detail_category_id")
+  detailCategory    DetailCategory @relation(fields: [detailCategoryId], references: [id])
+  images            ProductImage[]
+  colors            ProductColor[]
+  promotions        ProductPromotion[]
+
+  @@map("products")
+  @@unique([name, price])
+}
+
+model Color {
+  id                String        @id @default(cuid())
+  name              String
+  code              String
+  createdAt         DateTime      @default(now()) @map(name: "created_at")
+  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
+  products          ProductColor[]
+
+  @@map("colors")
+}
+
+model ProductColor {
+  productId String
+  colorId   String
+  product   Product @relation(fields: [productId], references: [id])
+  color     Color   @relation(fields: [colorId], references: [id])
+
+  @@id([productId, colorId])
+  @@map("product_colors")
+}
+
+
+model Image {
+  id                String        @id @default(cuid())
+  url               String
+  createdAt         DateTime      @default(now()) @map(name: "created_at")
+  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
+  products          ProductImage[]
+  
+  @@map("images")
+}
+
+model ProductImage {
+  productId String
+  imageId   String
+  product   Product @relation(fields: [productId], references: [id])
+  image     Image   @relation(fields: [imageId], references: [id])
+
+  @@id([productId, imageId])
+  @@map("product_images")
+}
+
+model Promotion {
+  id                String        @id @default(cuid())
+  name              String
+  description       String
+  startDay          DateTime      @default(now()) @map(name: "start_day")
+  endDay            DateTime
+  createdAt         DateTime      @default(now()) @map(name: "created_at")
+  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
+  products          ProductPromotion[]
+
+  @@map("promotions")
+  @@unique([name])
+}
+
+model ProductPromotion {
+  productId   String
+  promotionId String
+  product     Product   @relation(fields: [productId], references: [id])
+  promotion   Promotion @relation(fields: [promotionId], references: [id])
+
+  @@id([productId, promotionId])
+  @@map("product_promotions")
+}
+
+
+
+
+
+
