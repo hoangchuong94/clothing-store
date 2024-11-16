@@ -4,7 +4,7 @@ import { Pool, neonConfig } from '@neondatabase/serverless';
 import ws from 'ws';
 
 neonConfig.webSocketConstructor = ws;
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.POSTGRES_URL;
 
 const pool = new Pool({ connectionString });
 const adapter = new PrismaNeon(pool);

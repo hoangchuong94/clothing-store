@@ -82,8 +82,19 @@ export const authConfig = {
         },
         jwt: async ({ token, user }) => {
             if (user && token.sub) {
-                console.log(user);
-                return token;
+                const exitingUser = await prisma.user.findUnique({
+                    where: {
+                        id: token.sub,
+                    },
+                });
+
+                if (!exitingUser) return token;
+
+                return {
+                    ...token,
+                    id: exitingUser.id,
+                    role: exitingUser.role,
+                };
             }
             return token;
         },
