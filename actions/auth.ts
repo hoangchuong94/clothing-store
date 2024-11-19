@@ -6,50 +6,48 @@ import bcryptjs from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { LoginSchema, RegisterSchema } from '@/schema/auth';
 
-import { DEFAULT_ADMIN_LOGIN_REDIRECT } from '@/routes';
+import { DEFAULT_ADMIN_SIGN_IN_REDIRECT } from '@/routes';
 import { sendVerificationEmail } from '@/lib/mail';
 import { generateVerificationToken } from '@/lib/tokens';
 
 export async function authenticate(values: z.infer<typeof LoginSchema>, callbackUrl?: string | null) {
-    const validatedFields = LoginSchema.safeParse(values);
-
-    if (!validatedFields.success) {
-        return { error: 'Invalid fields!' };
-    }
-
-    const { email, password } = validatedFields.data;
-
-    const user = await prisma.user.findUnique({
-        where: {
-            email: email,
-        },
-    });
-
-    console.log(user);
-
-    if (user && user.emailVerified && !user.password) {
-        return { error: 'Please login with your provider' };
-    }
-
-    if (!user || !user.email || !user.password) {
-        return { error: 'Email does not exist!' };
-    }
-
-    if (user && !user.emailVerified) {
-        const verificationToken = await generateVerificationToken(user.email);
-
-        if (verificationToken) {
-            await sendVerificationEmail({
-                email: verificationToken.email,
-                token: verificationToken.token,
-            });
-            return {
-                success: 'Confirmation email sent successfully. Please check your email',
-            };
-        }
-    }
-
     try {
+        const validatedFields = LoginSchema.safeParse(values);
+
+        if (!validatedFields.success) {
+            return { error: 'Invalid fields!' };
+        }
+
+        const { email, password } = validatedFields.data;
+
+        const user = await prisma.user.findUnique({
+            where: {
+                email: email,
+            },
+        });
+
+        if (user && user.emailVerified && !user.password) {
+            return { error: 'Please login with your provider' };
+        }
+
+        if (!user || !user.email || !user.password) {
+            return { error: 'Email does not exist!' };
+        }
+
+        if (user && !user.emailVerified) {
+            const verificationToken = await generateVerificationToken(user.email);
+
+            if (verificationToken) {
+                await sendVerificationEmail({
+                    email: verificationToken.email,
+                    token: verificationToken.token,
+                });
+                return {
+                    success: 'Confirmation email sent successfully. Please check your email',
+                };
+            }
+        }
+
         if (user.role === 'USER') {
             await signIn('credentials', {
                 email,
@@ -60,7 +58,8 @@ export async function authenticate(values: z.infer<typeof LoginSchema>, callback
             await signIn('credentials', {
                 email,
                 password,
-                redirectTo: callbackUrl || DEFAULT_ADMIN_LOGIN_REDIRECT,
+
+                redirectTo: callbackUrl || DEFAULT_ADMIN_SIGN_IN_REDIRECT,
             });
         }
     } catch (error) {
@@ -71,9 +70,11 @@ export async function authenticate(values: z.infer<typeof LoginSchema>, callback
                 case 'OAuthAccountNotLinked':
                     return { error: 'Invalid Account not Link' };
                 default:
+                    console.log(error);
                     return { error: 'Something went wrong!' };
             }
         }
+        console.log(error);
         throw error;
     } finally {
         prisma.$disconnect();

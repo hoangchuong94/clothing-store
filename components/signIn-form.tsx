@@ -1,13 +1,19 @@
 'use client';
+
+import z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useState, useTransition } from 'react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import React, { useState, useTransition } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import z from 'zod';
+
 import githubIcon from '@/public/icon/github-icon.svg';
 import googleIcon from '@/public/icon/google-icon.svg';
-import { zodResolver } from '@hookform/resolvers/zod';
+
+import LoadingSpinner from '@/components/loading-spinner';
 import Auth from '@/components/auth';
 import { signIn } from 'next-auth/react';
 import { authenticate } from '@/actions/auth';
@@ -15,9 +21,7 @@ import { LoginSchema } from '@/schema/auth';
 import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
 import { Button } from '@/components/ui/button';
-import Image from 'next/image';
-import Link from 'next/link';
-import LoadingSpinner from '@/components/loading-spinner';
+
 import { ArrowRight } from 'lucide-react';
 
 export default function SignInForm() {
@@ -66,10 +70,10 @@ export default function SignInForm() {
 
     return (
         <Auth
-            headerLabel="Login"
+            headerLabel="Sign In"
             footerLabel="Do not have an account ? "
             footerHref="/signUp"
-            className="md:rounded-none"
+            className="xl:rounded-none"
         >
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -77,7 +81,7 @@ export default function SignInForm() {
                         control={form.control}
                         name="email"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="py-2">
                                 <FormLabel>Email : </FormLabel>
                                 <FormControl>
                                     <Input placeholder="Please enter your email" {...field} />
@@ -91,10 +95,10 @@ export default function SignInForm() {
                         control={form.control}
                         name="password"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="py-2">
                                 <FormLabel>Password :</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Please enter your password" {...field} />
+                                    <Input placeholder="Please enter your password" {...field} type="password" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -113,7 +117,7 @@ export default function SignInForm() {
                             <LoadingSpinner />
                         ) : (
                             <>
-                                <p>Login</p>
+                                <p>Sign In</p>
                                 <ArrowRight className="ml-auto h-5 w-5 text-gray-50" />
                             </>
                         )}
@@ -122,8 +126,10 @@ export default function SignInForm() {
             </Form>
 
             <div className="flex flex-col">
-                <FormError message={error || urlError} />
-                <FormSuccess message={success} />
+                <div className="pt-2">
+                    <FormError message={error || urlError} />
+                    <FormSuccess message={success} />
+                </div>
 
                 <div className="my-3 flex items-center justify-center">
                     <span className="w-full border border-b-black"></span>
@@ -131,7 +137,7 @@ export default function SignInForm() {
                     <span className="w-full border border-b-black"></span>
                 </div>
 
-                <div className="grid grid-rows-2 gap-2 md:grid-cols-2">
+                <div className="gap-2 max-md:grid max-md:grid-rows-2 md:grid md:grid-cols-2">
                     <Button className="h-12 md:h-16" variant={'outline'} onClick={() => signInProvider('google')}>
                         <Image src={googleIcon} alt="google icon" width={30} height={30} priority />
                     </Button>

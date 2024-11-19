@@ -1,10 +1,10 @@
-import { DEFAULT_ADMIN_LOGIN_REDIRECT, apiAuthPrefix, authRoutes, publicRoutes } from '@/routes';
+import { DEFAULT_ADMIN_SIGN_IN_REDIRECT, apiAuthPrefix, authRoutes, publicRoutes } from '@/routes';
 import bcryptjs from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import Credentials from 'next-auth/providers/credentials';
 import google from 'next-auth/providers/google';
 import github from 'next-auth/providers/github';
-import facebook from 'next-auth/providers/facebook';
+
 import type { NextAuthConfig } from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 
@@ -17,22 +17,25 @@ export const authConfig = {
     providers: [
         google,
         github,
-        facebook,
+
         Credentials({
             async authorize(credentials) {
-                if (!credentials.email || !credentials.password) {
-                    return null;
+                try {
+                    if (!credentials.email || !credentials.password) {
+                        return null;
+                    }
+                    const user = await prisma.user.findUnique({
+                        where: {
+                            email: String(credentials.email),
+                        },
+                    });
+                    if (!user || !(await bcryptjs.compare(String(credentials.password), user.password!))) {
+                        return null;
+                    }
+                    return user;
+                } catch (error) {
+                    throw error;
                 }
-                const user = await prisma.user.findUnique({
-                    where: {
-                        email: String(credentials.email),
-                    },
-                });
-
-                if (!user || !(await bcryptjs.compare(String(credentials.password), user.password!))) {
-                    return null;
-                }
-                return user;
             },
         }),
     ],
@@ -53,7 +56,7 @@ export const authConfig = {
 
             if (isAuthRoute) {
                 if (isLoggedIn && auth.user.role === 'ADMIN') {
-                    return Response.redirect(new URL(DEFAULT_ADMIN_LOGIN_REDIRECT, nextUrl));
+                    return Response.redirect(new URL(DEFAULT_ADMIN_SIGN_IN_REDIRECT, nextUrl.origin));
                 }
 
                 if (isLoggedIn && auth.user.role === 'USER') {
@@ -123,13 +126,15 @@ export const authConfig = {
 
             return true;
         },
-        async redirect({ url, baseUrl }) {
-            return url.startsWith(baseUrl) ? url : baseUrl;
-        },
+
+        // redirect: async ({ url, baseUrl }) => {
+        //     if (url.startsWith('/')) return `${baseUrl}${url}`;
+        //     else if (new URL(url).origin === baseUrl) return url;
+        //     return baseUrl;
+        // },
     },
     events: {
         linkAccount: async ({ user }) => {
-            console.log(user);
             await prisma.user.update({
                 where: { id: user.id },
                 data: {

@@ -33,23 +33,25 @@ export default function SignUpForm() {
         setError('');
         setSuccess('');
         startTransition(() => {
-            register(values).then((data) => {
-                if (data?.error) {
-                    form.reset();
-                    setError(data.error);
-                }
-                if (data?.success) {
-                    form.reset();
-                    setSuccess(data.success);
-                }
-            });
+            register(values)
+                .then((data) => {
+                    if (data?.error) {
+                        form.reset();
+                        setError(data.error);
+                    }
+                    if (data?.success) {
+                        form.reset();
+                        setSuccess(data.success);
+                    }
+                })
+                .catch(() => setError('Something went wrong'));
         });
     };
 
     return (
         <AuthCardWrapper
-            className="md:rounded-none"
-            headerLabel="Register"
+            className="xl:rounded-none"
+            headerLabel="Sign Up"
             footerLabel="You Have An Account ? "
             footerHref="/signIn"
         >
@@ -59,7 +61,7 @@ export default function SignUpForm() {
                         control={form.control}
                         name="name"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="py-2">
                                 <FormLabel>Name : </FormLabel>
                                 <FormControl>
                                     <Input placeholder="Please enter your name" {...field} />
@@ -72,7 +74,7 @@ export default function SignUpForm() {
                         control={form.control}
                         name="email"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="py-2">
                                 <FormLabel>Email : </FormLabel>
                                 <FormControl>
                                     <Input placeholder="Please enter your name" {...field} />
@@ -85,10 +87,10 @@ export default function SignUpForm() {
                         control={form.control}
                         name="password"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="py-2">
                                 <FormLabel>Password :</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Please enter your password" {...field} />
+                                    <Input placeholder="Please enter your password" {...field} type="password" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -99,10 +101,14 @@ export default function SignUpForm() {
                         control={form.control}
                         name="passwordConfirm"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="py-2">
                                 <FormLabel>Password Confirm :</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Please enter your password confirm" {...field} />
+                                    <Input
+                                        placeholder="Please enter your password confirm"
+                                        {...field}
+                                        type="password"
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -113,7 +119,8 @@ export default function SignUpForm() {
                             <LoadingSpinner />
                         ) : (
                             <>
-                                <p>Register</p>
+                                <p>Sign Up</p>
+
                                 <ArrowRight className="ml-auto h-5 w-5 text-gray-50" />
                             </>
                         )}
@@ -121,8 +128,10 @@ export default function SignUpForm() {
                 </form>
             </Form>
 
-            <FormError message={error} />
-            <FormSuccess message={success} />
+            <div className="pt-2">
+                <FormError message={error} />
+                <FormSuccess message={success} />
+            </div>
         </AuthCardWrapper>
     );
 }
