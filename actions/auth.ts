@@ -5,10 +5,10 @@ import { signIn } from '@/auth';
 import bcryptjs from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { LoginSchema, RegisterSchema } from '@/schema/auth';
-
-import { DEFAULT_ADMIN_SIGN_IN_REDIRECT } from '@/routes';
 import { sendVerificationEmail } from '@/lib/mail';
 import { generateVerificationToken } from '@/lib/tokens';
+import { redirect } from 'next/navigation';
+import { DEFAULT_ADMIN_SIGN_IN_REDIRECT } from '@/routes';
 
 export async function authenticate(values: z.infer<typeof LoginSchema>, callbackUrl?: string | null) {
     try {
@@ -48,18 +48,19 @@ export async function authenticate(values: z.infer<typeof LoginSchema>, callback
             }
         }
 
+        if (user.role === 'ADMIN') {
+            await signIn('credentials', {
+                email,
+                password,
+                redirectTo: callbackUrl || DEFAULT_ADMIN_SIGN_IN_REDIRECT,
+            });
+        }
+
         if (user.role === 'USER') {
             await signIn('credentials', {
                 email,
                 password,
                 redirectTo: callbackUrl || '/',
-            });
-        } else {
-            await signIn('credentials', {
-                email,
-                password,
-
-                redirectTo: callbackUrl || DEFAULT_ADMIN_SIGN_IN_REDIRECT,
             });
         }
     } catch (error) {
@@ -70,11 +71,9 @@ export async function authenticate(values: z.infer<typeof LoginSchema>, callback
                 case 'OAuthAccountNotLinked':
                     return { error: 'Invalid Account not Link' };
                 default:
-                    console.log(error);
                     return { error: 'Something went wrong!' };
             }
         }
-        console.log(error);
         throw error;
     } finally {
         prisma.$disconnect();
