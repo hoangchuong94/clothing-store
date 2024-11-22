@@ -10,7 +10,6 @@ export default function FooterAuth({ label, href }: FooterAuthProps) {
     return (
         <Link href={href} className="my-4 flex w-full items-center justify-center text-sm">
             <p className="text-black">
-                {/* Do not have an account ?{' '} */}
                 {label}
                 <span className="text-blue-500 active:opacity-5">click here</span>
             </p>

@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import '/styles/custom-btn.module.scss';
 
 body {
     font-family: Arial, Helvetica, sans-serif;
@@ -12,7 +13,6 @@ body {
     }
 }
 
-/* From Uiverse.io by satyamchaudharydev */
 .loading {
     --speed-of-animation: 0.9s;
     --gap: 6px;

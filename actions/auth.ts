@@ -7,7 +7,6 @@ import { AuthError } from 'next-auth';
 import { LoginSchema, RegisterSchema } from '@/schema/auth';
 import { sendVerificationEmail } from '@/lib/mail';
 import { generateVerificationToken } from '@/lib/tokens';
-import { redirect } from 'next/navigation';
 import { DEFAULT_ADMIN_SIGN_IN_REDIRECT } from '@/routes';
 
 export async function authenticate(values: z.infer<typeof LoginSchema>, callbackUrl?: string | null) {

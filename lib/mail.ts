@@ -6,7 +6,7 @@ interface SendEmailProps {
 }
 
 export const sendVerificationEmail = async ({ email, token }: SendEmailProps) => {
-    const confirmLink = `<a href="${process.env.URL}/new-verification?token=${token}">Click here to verify your email</a>`;
+    const confirmLink = `<a href="${process.env.BASE_URL}/new-verification?token=${token}">Click here to verify your email</a>`;
     try {
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
@@ -33,7 +33,7 @@ export const sendVerificationEmail = async ({ email, token }: SendEmailProps) =>
 };
 
 export const sendVerificationForgotPassword = async (email: string, token: string) => {
-    const confirmLink = `<a href="${process.env.URL}/forgot-password?token=${token}">Click here to reset your password</a>`;
+    const confirmLink = `<a href="${process.env.BASE_URL}/forgot-password?token=${token}">Click here to reset your password</a>`;
     try {
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
