@@ -1,0 +1,9 @@
+.toggle-item[data-state='on'] {
+    background-color: black !important;
+    color: white !important ;
+}
+
+.toggle-item[data-state='off'] {
+    background-color: transparent;
+    color: black;
+}

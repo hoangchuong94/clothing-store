@@ -118,11 +118,10 @@ export default function SignUpForm() {
                         {isPending ? (
                             <LoadingSpinner />
                         ) : (
-                            <>
+                            <div>
                                 <p>Sign Up</p>
-
                                 <ArrowRight className="ml-auto h-5 w-5 text-gray-50" />
-                            </>
+                            </div>
                         )}
                     </Button>
                 </form>

@@ -9,6 +9,9 @@ import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+    pages: {
+        signIn: '/signIn',
+    },
     adapter: PrismaAdapter(prisma),
     session: { strategy: 'jwt' },
     providers: [

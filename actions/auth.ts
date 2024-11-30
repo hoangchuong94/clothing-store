@@ -25,10 +25,6 @@ export async function authenticate(values: z.infer<typeof LoginSchema>, callback
             },
         });
 
-        if (user && user.emailVerified && !user.password) {
-            return { error: 'Please login with your provider' };
-        }
-
         if (!user || !user.email || !user.password) {
             return { error: 'Email does not exist!' };
         }
@@ -46,6 +42,12 @@ export async function authenticate(values: z.infer<typeof LoginSchema>, callback
                 };
             }
         }
+
+        await signIn('credentials', {
+            email,
+            password,
+            redirect: false,
+        });
 
         if (user.role === 'ADMIN') {
             await signIn('credentials', {

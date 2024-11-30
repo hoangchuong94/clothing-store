@@ -1,12 +1,13 @@
 import React, { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import clsx from 'clsx';
+import Link from 'next/link';
 
-export const SignInBtn = () => {
+export const CreateProductBtn = () => {
     return (
         <Button
             className={clsx(
-                'group relative flex w-full items-center overflow-hidden rounded-md bg-indigo-500 px-12 py-6 font-medium transition-all',
+                'group relative flex w-auto items-center overflow-hidden rounded-md bg-indigo-500 px-12 py-6 font-medium transition-all',
             )}
         >
             <span className="w absolute right-0 top-0 inline-block h-4 w-4 rounded bg-indigo-700 transition-all duration-500 ease-in-out group-hover:-mr-4 group-hover:-mt-4">
@@ -17,7 +18,7 @@ export const SignInBtn = () => {
             </span>
             <span className="absolute bottom-0 left-0 h-full w-full -translate-x-full rounded-md bg-indigo-600 transition-all delay-200 duration-500 ease-in-out group-hover:translate-x-0"></span>
             <span className="relative w-full text-left text-white transition-colors duration-200 ease-in-out group-hover:text-white">
-                Sign In
+                <Link href={'/dashboard/product/create'}>Create Product</Link>
             </span>
         </Button>
     );
