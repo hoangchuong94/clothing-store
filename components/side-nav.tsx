@@ -132,7 +132,7 @@ export default function DashboardSideNav({ user }: DashboardSideNavProps) {
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
-            {/* <SidebarFooter>
+            <SidebarFooter>
                 <SidebarHeader>
                     <SidebarMenu>
                         <SidebarMenuItem>
@@ -160,7 +160,7 @@ export default function DashboardSideNav({ user }: DashboardSideNavProps) {
                         </SidebarMenuItem>
                     </SidebarMenu>
                 </SidebarHeader>
-            </SidebarFooter> */}
+            </SidebarFooter>
         </Sidebar>
     );
 }
