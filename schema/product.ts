@@ -24,4 +24,12 @@ export const CreateProductSchema = z.object({
     discountType: z.string(),
     thumbnailFile: z.string(),
     imageFiles: ImagesSchema,
+    categories: z.array(
+        z.object({
+            id: z.string(),
+            name: z.string(),
+            createdAt: z.date(),
+            updatedAt: z.date(),
+        }),
+    ),
 });

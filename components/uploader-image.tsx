@@ -62,7 +62,7 @@ export default function UploadImage({ file, setUrl, onChange }: UploadImageProps
                     maxSize: 1000000,
                 }}
             />
-            {/* <Progress className="h-2 w-[300px]" value={!file ? 0 : progress} /> */}
+            {/* <Progress className="mt-0 h-2 w-[300px]" value={!file ? 0 : progress} /> */}
         </>
     );
 }

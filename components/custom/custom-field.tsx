@@ -23,8 +23,8 @@ export const GenericField = <TFieldValues extends FieldValues>({
         control={fieldProps.control}
         name={fieldProps.name as FieldPath<TFieldValues>}
         render={({ field }) => (
-            <FormItem>
-                <FormLabel>{label}</FormLabel>
+            <FormItem className="flex flex-col">
+                {label && <FormLabel>{label}</FormLabel>}
                 <FormControl>{renderInput(field)}</FormControl>
                 <FormMessage />
             </FormItem>

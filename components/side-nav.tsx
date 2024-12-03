@@ -98,8 +98,11 @@ export default function DashboardSideNav({ user }: DashboardSideNavProps) {
                                         key={index}
                                         className={`${!open && 'flex items-center justify-center'}`}
                                     >
-                                        <CollapsibleTrigger asChild className="hover:cursor-pointer">
-                                            <SidebarMenuButton asChild>
+                                        <CollapsibleTrigger asChild>
+                                            <SidebarMenuButton
+                                                asChild
+                                                className="hover:cursor-pointer data-[state=closed]:bg-slate-200 data-[state=open]:bg-slate-200 data-[state=open]:hover:bg-slate-200"
+                                            >
                                                 <div>
                                                     <item.icon />
                                                     <span>{item.title}</span>
@@ -108,10 +111,13 @@ export default function DashboardSideNav({ user }: DashboardSideNavProps) {
                                             </SidebarMenuButton>
                                         </CollapsibleTrigger>
                                         <CollapsibleContent>
-                                            <SidebarMenuSub>
+                                            <SidebarMenuSub className="border-slate-400">
                                                 {item.subNav &&
                                                     item.subNav.map((item, index) => (
-                                                        <SidebarMenuSubItem key={index}>
+                                                        <SidebarMenuSubItem
+                                                            key={index}
+                                                            className="hover:underline hover:decoration-from-font"
+                                                        >
                                                             <Link href={item.ulr}>
                                                                 <span>{item.title}</span>
                                                             </Link>
@@ -126,7 +132,7 @@ export default function DashboardSideNav({ user }: DashboardSideNavProps) {
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
-            <SidebarFooter>
+            {/* <SidebarFooter>
                 <SidebarHeader>
                     <SidebarMenu>
                         <SidebarMenuItem>
@@ -154,7 +160,7 @@ export default function DashboardSideNav({ user }: DashboardSideNavProps) {
                         </SidebarMenuItem>
                     </SidebarMenu>
                 </SidebarHeader>
-            </SidebarFooter>
+            </SidebarFooter> */}
         </Sidebar>
     );
 }

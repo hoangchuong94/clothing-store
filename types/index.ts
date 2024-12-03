@@ -19,3 +19,9 @@ export type UploadedImage = {
     };
     pathOrder: 'type'[];
 };
+
+export interface CardCreateProductFormProps {
+    label?: string;
+    className?: string;
+    children: React.ReactNode;
+}

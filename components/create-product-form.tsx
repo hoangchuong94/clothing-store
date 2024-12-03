@@ -11,7 +11,8 @@ import { Button } from './ui/button';
 import { Check, SquarePen } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from './ui/textarea';
-import { ImageField, ImagesField } from './custom/custom-field';
+import { CheckboxField, ImageField, ImagesField, SelectField } from '@/components/custom/custom-field';
+import { CardCreateProductFormProps } from '@/types/';
 
 const genders = [
     { id: '1', label: 'Men' },
@@ -68,6 +69,7 @@ export default function CreateProductForm() {
             discountType: '',
             thumbnailFile: '',
             imageFiles: [],
+            categories: [{ id: '1', name: 'clothing' }],
         },
     });
 
@@ -75,29 +77,22 @@ export default function CreateProductForm() {
         console.log(values);
     };
     return (
-        <div className="bg-white px-4">
-            <div className="flex w-full items-center justify-between">
-                <div className="my-4 text-2xl">
-                    <h1 className="flex items-center justify-center">
-                        <SquarePen className="mr-2" />
-                        <span>Create Product</span>
-                    </h1>
-                </div>
-                <div>
-                    <Button variant="outline" size="lg" className="rounded-3xl bg-green-300 text-white">
-                        <Check />
-                        Add Product
-                    </Button>
-                </div>
+        <div className="flex flex-col bg-white px-4">
+            <div className="flex w-full items-center justify-between py-4">
+                <h1 className="flex items-center justify-center">
+                    <SquarePen className="mr-2" />
+                    <span>Create Product</span>
+                </h1>
+                <Button size="lg" className="rounded-3xl bg-green-400 text-white">
+                    <Check />
+                    Add Product
+                </Button>
             </div>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
                     <div className="flex flex-row space-x-2">
-                        <div className="w-8/12">
-                            <div className="rounded-2xl bg-slate-100 p-4">
-                                <div className="mb-2">
-                                    <h2>General Information</h2>
-                                </div>
+                        <div className="w-8/12 space-y-2">
+                            <CardCreateProductForm label="General Information">
                                 <FormField
                                     control={form.control}
                                     name="name"
@@ -122,13 +117,7 @@ export default function CreateProductForm() {
                                     render={({ field }) => (
                                         <FormItem className="py-2">
                                             <FormLabel>Description Product</FormLabel>
-
                                             <FormControl>
-                                                {/* <Input
-                                                        className="bg-slate-200 focus:bg-white"
-                                                        placeholder="Please enter your description"
-                                                        {...field}
-                                                    /> */}
                                                 <div className="grid w-full gap-2">
                                                     <Textarea
                                                         className="bg-slate-200 focus:bg-white"
@@ -199,7 +188,7 @@ export default function CreateProductForm() {
                                                                     <FormControl>
                                                                         <RadioGroupItem
                                                                             value={item.label}
-                                                                            className="data-[state=checked]:bg-green-300 data-[state=checked]:text-white"
+                                                                            className="data-[state=checked]:bg-green-400 data-[state=checked]:text-white"
                                                                         />
                                                                     </FormControl>
                                                                     <FormLabel className="font-normal">
@@ -215,13 +204,9 @@ export default function CreateProductForm() {
                                         )}
                                     />
                                 </div>
-                            </div>
+                            </CardCreateProductForm>
 
-                            <div className="mt-2 rounded-2xl bg-slate-100 p-4">
-                                <div className="mb-2">
-                                    <h2>Pricing And Stock</h2>
-                                </div>
-
+                            <CardCreateProductForm label="Pricing And Stock">
                                 <div className="grid grid-cols-2 gap-2">
                                     <FormField
                                         control={form.control}
@@ -301,13 +286,31 @@ export default function CreateProductForm() {
                                         )}
                                     />
                                 </div>
-                            </div>
+                            </CardCreateProductForm>
                         </div>
-                        <div className="w-4/12">
-                            <div className="flex flex-col items-center justify-center rounded-2xl bg-slate-100">
-                                <ImageField control={form.control} name="thumbnailFile" setUrl={setThumbnailUrl} />
-                                <ImagesField control={form.control} name="imageFiles" setUrls={setImageUrls} />
-                            </div>
+                        <div className="w-4/12 space-y-2">
+                            <CardCreateProductForm className="flex flex-col" label="Upload Image">
+                                <div className="flex w-full flex-col items-center justify-center">
+                                    <ImageField control={form.control} name="thumbnailFile" setUrl={setThumbnailUrl} />
+                                    <ImagesField control={form.control} name="imageFiles" setUrls={setImageUrls} />
+                                </div>
+                            </CardCreateProductForm>
+
+                            <CardCreateProductForm>
+                                <SelectField
+                                    label="Category"
+                                    name="category"
+                                    items={[
+                                        { id: '1', name: 'clothing' },
+                                        { id: '2', name: 'jean' },
+                                    ]}
+                                    getItemKey={(item) => item.id}
+                                    renderItem={(item) => item.name}
+                                />
+                                <Button className="mt-2 w-full bg-green-400" type="button">
+                                    Add Category
+                                </Button>
+                            </CardCreateProductForm>
                         </div>
                     </div>
                 </form>
@@ -315,3 +318,14 @@ export default function CreateProductForm() {
         </div>
     );
 }
+
+export const CardCreateProductForm = ({ children, label, className }: CardCreateProductFormProps) => {
+    return (
+        <div className={`rounded-2xl bg-slate-100 p-4 ${className}`}>
+            <div className="mb-2">
+                <h2>{label}</h2>
+            </div>
+            {children}
+        </div>
+    );
+};
