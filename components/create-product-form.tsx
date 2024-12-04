@@ -78,7 +78,7 @@ export default function CreateProductForm() {
     };
     return (
         <div className="flex flex-col bg-white px-4">
-            <div className="flex w-full items-center justify-between py-4">
+            <div className="flex w-full items-center justify-between pb-4">
                 <h1 className="flex items-center justify-center">
                     <SquarePen className="mr-2" />
                     <span>Create Product</span>

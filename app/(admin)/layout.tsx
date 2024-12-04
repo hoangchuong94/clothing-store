@@ -1,10 +1,11 @@
-import SideNavDashboard from '@/components/side-nav';
-import LinkHierarchy from '@/components/link-hierarchy';
-import { Switch } from '@/components/ui/switch';
-import { auth } from '@/auth';
-import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
+
+import { cookies } from 'next/headers';
+import { auth } from '@/auth';
 import { SidebarProvider, SidebarTrigger, SidebarInset, SidebarSeparator } from '@/components/ui/sidebar';
+
+import DashboardSidebar from '@/components/sidebar';
+import LinkHierarchy from '@/components/link-hierarchy';
 
 export const metadata: Metadata = {
     title: 'admin page',
@@ -23,7 +24,7 @@ export default async function RootLayout({
 
     return (
         <SidebarProvider defaultOpen={defaultOpen || true}>
-            <SideNavDashboard user={session.user} />
+            <DashboardSidebar user={session.user} />
             <SidebarInset>
                 <div className="flex h-14 items-center justify-between px-2">
                     <div className="flex items-center justify-center">
@@ -31,7 +32,7 @@ export default async function RootLayout({
                         <LinkHierarchy />
                     </div>
                 </div>
-                <SidebarSeparator />
+
                 {children}
             </SidebarInset>
         </SidebarProvider>
