@@ -77,7 +77,7 @@ export default function CreateProductForm() {
         console.log(values);
     };
     return (
-        <div className="flex flex-col bg-white px-4">
+        <div className="flex flex-col bg-white px-4 pb-4">
             <div className="flex w-full items-center justify-between pb-4">
                 <h1 className="flex items-center justify-center">
                     <SquarePen className="mr-2" />
@@ -188,7 +188,7 @@ export default function CreateProductForm() {
                                                                     <FormControl>
                                                                         <RadioGroupItem
                                                                             value={item.label}
-                                                                            className="data-[state=checked]:bg-green-400 data-[state=checked]:text-white"
+                                                                            className="data-[state=checked]:bg-green-400 data-[state=unchecked]:bg-white data-[state=checked]:text-white"
                                                                         />
                                                                     </FormControl>
                                                                     <FormLabel className="font-normal">

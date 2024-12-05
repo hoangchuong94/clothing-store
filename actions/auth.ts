@@ -43,12 +43,6 @@ export async function authenticate(values: z.infer<typeof LoginSchema>, callback
             }
         }
 
-        await signIn('credentials', {
-            email,
-            password,
-            redirect: false,
-        });
-
         if (user.role === 'ADMIN') {
             await signIn('credentials', {
                 email,
