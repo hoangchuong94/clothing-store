@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
 
+import { Slash } from 'lucide-react';
+
 import { cookies } from 'next/headers';
 import { auth } from '@/auth';
-import { SidebarProvider, SidebarTrigger, SidebarInset, SidebarSeparator } from '@/components/ui/sidebar';
+import { BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { SidebarProvider, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
 
 import DashboardSidebar from '@/components/sidebar';
 import LinkHierarchy from '@/components/link-hierarchy';
@@ -29,6 +32,9 @@ export default async function RootLayout({
                 <div className="flex h-14 items-center justify-between px-2">
                     <div className="flex items-center justify-center">
                         <SidebarTrigger />
+                        <BreadcrumbSeparator className="list-none">
+                            <Slash />
+                        </BreadcrumbSeparator>
                         <LinkHierarchy />
                     </div>
                 </div>
