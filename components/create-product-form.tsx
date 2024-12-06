@@ -3,54 +3,29 @@ import z from 'zod';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Check, SquarePen } from 'lucide-react';
+import { CreateProductSchema } from '@/schema/product';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { CreateProductSchema } from '@/schema/product';
-import { Button } from './ui/button';
-import { Check, SquarePen } from 'lucide-react';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Textarea } from './ui/textarea';
-import { CheckboxField, ImageField, ImagesField, SelectField } from '@/components/custom/custom-field';
-import { CardCreateProductFormProps } from '@/types/';
 
-const genders = [
-    { id: '1', label: 'Men' },
-    {
-        id: '2',
-        label: 'Women',
-    },
-    {
-        id: '3',
-        label: 'Unisex',
-    },
-];
-const sizes = [
-    {
-        id: '1',
-        label: 'XS',
-    },
-    {
-        id: '2',
-        label: 'S',
-    },
-    {
-        id: '3',
-        label: 'M',
-    },
-    {
-        id: '4',
-        label: 'XL',
-    },
-    {
-        id: '5',
-        label: 'XXL',
-    },
-    {
-        id: '6',
-        label: '2XXL',
-    },
-] as const;
+import { genders, sizes } from '@/data/placeholder';
+import { CardCreateProductFormProps } from '@/types/';
+import {
+    ImageField,
+    ImagesField,
+    InputField,
+    NumericInputField,
+    PopoverSelectField,
+    RadioGroupField,
+    SelectGroupField,
+    TextAreaField,
+    ToggleGroupField,
+} from '@/components/custom/custom-field';
 
 export default function CreateProductForm() {
     const [thumbnailUrl, setThumbnailUrl] = useState<string>('');
@@ -77,7 +52,7 @@ export default function CreateProductForm() {
         console.log(values);
     };
     return (
-        <div className="flex flex-col bg-white px-4 pb-4">
+        <div className="px-4">
             <div className="flex w-full items-center justify-between pb-4">
                 <h1 className="flex items-center justify-center">
                     <SquarePen className="mr-2" />
@@ -90,214 +65,99 @@ export default function CreateProductForm() {
             </div>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-                    <div className="flex flex-row space-x-2">
-                        <div className="w-8/12 space-y-2">
-                            <CardCreateProductForm label="General Information">
-                                <FormField
-                                    control={form.control}
+                    <div className="max-md:space-y-2 md:flex md:flex-row md:space-x-2">
+                        <div className="space-y-2 md:w-8/12">
+                            <CardCreateProductForm label="General Information" className="space-y-4 xl:space-y-6">
+                                <InputField
                                     name="name"
-                                    render={({ field }) => (
-                                        <FormItem className="py-2">
-                                            <FormLabel>Name Product</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    className="bg-slate-200 focus:bg-white"
-                                                    placeholder="Please enter your name"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
+                                    label="Name Product"
+                                    className="bg-slate-200 focus:bg-white"
+                                    placeholder="Please enter your name"
                                 />
 
-                                <FormField
-                                    control={form.control}
+                                <TextAreaField
                                     name="description"
-                                    render={({ field }) => (
-                                        <FormItem className="py-2">
-                                            <FormLabel>Description Product</FormLabel>
-                                            <FormControl>
-                                                <div className="grid w-full gap-2">
-                                                    <Textarea
-                                                        className="bg-slate-200 focus:bg-white"
-                                                        placeholder="Type your message here."
-                                                        id="message-2"
-                                                    />
-                                                    <p className="text-muted-foreground text-sm text-gray-400">
-                                                        Your description will be visible to the customer support team.
-                                                    </p>
-                                                </div>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
+                                    label="Description Product"
+                                    className="h-30 bg-slate-200 focus:bg-white"
+                                    placeholder="Type your message here."
                                 />
 
-                                <div className="grid grid-cols-2 gap-2">
-                                    <FormField
-                                        control={form.control}
+                                <div className="grid gap-4 xl:grid-cols-2 xl:gap-2">
+                                    <ToggleGroupField
+                                        className="data-[state=off]:bg-white data-[state=on]:bg-green-400 data-[state=on]:text-white"
                                         name="size"
-                                        render={({ field }) => (
-                                            <FormItem className="flex flex-col items-start py-2">
-                                                <FormLabel>Size</FormLabel>
-                                                <FormDescription>Pick Available Size</FormDescription>
-                                                <FormControl>
-                                                    <ToggleGroup
-                                                        type="multiple"
-                                                        onValueChange={field.onChange}
-                                                        defaultValue={field.value}
-                                                    >
-                                                        {sizes.map((item) => {
-                                                            return (
-                                                                <ToggleGroupItem
-                                                                    key={item.id}
-                                                                    value={item.label}
-                                                                    className="data-[state=off]:bg-white data-[state=on]:bg-green-400 data-[state=on]:text-white"
-                                                                >
-                                                                    {item.label}
-                                                                </ToggleGroupItem>
-                                                            );
-                                                        })}
-                                                    </ToggleGroup>
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
+                                        label="Size"
+                                        items={sizes}
+                                        renderItem={(item) => item.label}
+                                        getItemKey={(item) => item.id}
+                                        description="Pick Available Size"
                                     />
 
-                                    <FormField
-                                        control={form.control}
+                                    <RadioGroupField
+                                        className="data-[state=checked]:bg-green-400 data-[state=unchecked]:bg-white data-[state=checked]:text-white"
+                                        label="Gender"
                                         name="gender"
-                                        render={({ field }) => (
-                                            <FormItem className="flex flex-col items-start py-2">
-                                                <FormLabel>Gender</FormLabel>
-                                                <FormDescription>Pick Available gender</FormDescription>
-                                                <FormControl>
-                                                    <RadioGroup
-                                                        onValueChange={field.onChange}
-                                                        defaultValue={field.value[0]}
-                                                        className="flex flex-1 space-y-1"
-                                                    >
-                                                        {genders.map((item) => {
-                                                            return (
-                                                                <FormItem
-                                                                    className="flex items-center space-x-3 space-y-0"
-                                                                    key={item.id}
-                                                                >
-                                                                    <FormControl>
-                                                                        <RadioGroupItem
-                                                                            value={item.label}
-                                                                            className="data-[state=checked]:bg-green-400 data-[state=unchecked]:bg-white data-[state=checked]:text-white"
-                                                                        />
-                                                                    </FormControl>
-                                                                    <FormLabel className="font-normal">
-                                                                        {item.label}
-                                                                    </FormLabel>
-                                                                </FormItem>
-                                                            );
-                                                        })}
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
+                                        items={genders}
+                                        description="Pick Available gender"
+                                        getItemKey={(item) => item.id}
+                                        renderItem={(item) => item.label}
                                     />
                                 </div>
                             </CardCreateProductForm>
 
-                            <CardCreateProductForm label="Pricing And Stock">
+                            <CardCreateProductForm label="Pricing And Stock" className="space-y-6">
                                 <div className="grid grid-cols-2 gap-2">
-                                    <FormField
-                                        control={form.control}
+                                    <NumericInputField
+                                        className="bg-slate-200 focus:bg-white"
+                                        label="Price"
                                         name="price"
-                                        render={({ field }) => (
-                                            <FormItem className="py-2">
-                                                <FormLabel>Base Pricing</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        className="bg-slate-200 focus:bg-white"
-                                                        type="number"
-                                                        placeholder="Please enter your price product"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
+                                        placeholder="Please enter your price product"
                                     />
 
-                                    <FormField
-                                        control={form.control}
+                                    <NumericInputField
+                                        className="bg-slate-200 focus:bg-white"
+                                        label="Stock"
                                         name="stock"
-                                        render={({ field }) => (
-                                            <FormItem className="py-2">
-                                                <FormLabel>Stock</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        className="bg-slate-200 focus:bg-white"
-                                                        type="number"
-                                                        placeholder="Please enter your stock product"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
+                                        placeholder="Please enter your stock product"
                                     />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-2">
-                                    <FormField
-                                        control={form.control}
+                                    <NumericInputField
+                                        className="bg-slate-200 focus:bg-white"
+                                        label="Discount"
                                         name="discount"
-                                        render={({ field }) => (
-                                            <FormItem className="py-2">
-                                                <FormLabel>Discount</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        className="bg-slate-200 focus:bg-white"
-                                                        type="number"
-                                                        placeholder="Enter your discount"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
+                                        placeholder="Enter your discount"
                                     />
 
-                                    <FormField
-                                        control={form.control}
+                                    <SelectGroupField
+                                        classNameBtn="bg-slate-200"
+                                        classNameItem="hover:cursor-pointer"
                                         name="discountType"
-                                        render={({ field }) => (
-                                            <FormItem className="py-2">
-                                                <FormLabel>Discount Type</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        className="bg-slate-200 focus:bg-white"
-                                                        type="number"
-                                                        placeholder="Enter your price discount type"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
+                                        label="Discount Type"
+                                        placeholder="Select item"
+                                        items={[
+                                            { id: '1', name: 'light' },
+                                            { id: '2', name: 'dark' },
+                                            { id: '3', name: 'system' },
+                                        ]}
+                                        getItemKey={(item) => item.id}
+                                        renderItem={(item) => item.name}
                                     />
                                 </div>
                             </CardCreateProductForm>
                         </div>
-                        <div className="w-4/12 space-y-2">
-                            <CardCreateProductForm className="flex flex-col" label="Upload Image">
-                                <div className="flex w-full flex-col items-center justify-center">
+
+                        <div className="flex flex-col space-y-2 md:w-4/12">
+                            <CardCreateProductForm label="Upload Image" className="flex flex-1 flex-col">
+                                <div className="flex items-center justify-start md:flex-col">
                                     <ImageField control={form.control} name="thumbnailFile" setUrl={setThumbnailUrl} />
                                     <ImagesField control={form.control} name="imageFiles" setUrls={setImageUrls} />
                                 </div>
                             </CardCreateProductForm>
 
                             <CardCreateProductForm>
-                                <SelectField
+                                <PopoverSelectField
                                     label="Category"
                                     name="category"
                                     items={[
@@ -307,6 +167,7 @@ export default function CreateProductForm() {
                                     getItemKey={(item) => item.id}
                                     renderItem={(item) => item.name}
                                 />
+
                                 <Button className="mt-2 w-full bg-green-400" type="button">
                                     Add Category
                                 </Button>
@@ -322,8 +183,8 @@ export default function CreateProductForm() {
 export const CardCreateProductForm = ({ children, label, className }: CardCreateProductFormProps) => {
     return (
         <div className={`rounded-2xl bg-slate-100 p-4 ${className}`}>
-            <div className="mb-2">
-                <h2>{label}</h2>
+            <div className="mb-2 flex w-full justify-start">
+                <h2 className="text-left">{label}</h2>
             </div>
             {children}
         </div>

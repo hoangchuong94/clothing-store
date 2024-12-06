@@ -3,6 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { signOut } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 import {
     CirclePercent,
     CreditCard,
@@ -16,7 +17,6 @@ import {
     HandCoins,
     ListRestart,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import {
     Sidebar,
     SidebarContent,
@@ -40,6 +40,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
@@ -47,13 +48,9 @@ import { DashboardSideNavProps } from '@/types';
 import logo from '@/public/static/logo-retina.png';
 
 export default function DashboardSidebar({ user }: DashboardSideNavProps) {
+    const pathname = usePathname();
     const { state, open, setOpen, openMobile, setOpenMobile, isMobile, toggleSidebar } = useSidebar();
-
-    let nameFallback = '';
-
-    if (user.name) {
-        nameFallback = user.name.charAt(0);
-    }
+    const isActive = (path: string) => pathname.split('/').includes(path);
 
     return (
         <Sidebar variant="floating" collapsible="icon" className="bg-slate-300">
@@ -79,23 +76,44 @@ export default function DashboardSidebar({ user }: DashboardSideNavProps) {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem className="flex items-center justify-center">
-                                <SidebarMenuButton asChild>
-                                    <Link href={'/'}>
+                                <SidebarMenuButton
+                                    asChild
+                                    className={`${
+                                        pathname.split('/').filter(Boolean).pop() === 'dashboard'
+                                            ? 'bg-green-400 text-white hover:bg-green-400 hover:text-white'
+                                            : ''
+                                    }`}
+                                >
+                                    <Link href={'/dashboard'}>
                                         <LayoutDashboard />
                                         <span>Overview</span>
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                             <SidebarMenuItem className="flex items-center justify-center">
-                                <SidebarMenuButton asChild>
-                                    <Link href={'/'}>
+                                <SidebarMenuButton
+                                    asChild
+                                    className={` ${
+                                        isActive('analytics')
+                                            ? 'bg-green-400 text-white hover:bg-green-400 hover:text-white'
+                                            : ''
+                                    }`}
+                                >
+                                    <Link href={'/dashboard/analytics'}>
                                         <ChartNoAxesCombined />
                                         <span>Analytics</span>
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                             <SidebarMenuItem className="flex items-center justify-center">
-                                <SidebarMenuButton asChild>
+                                <SidebarMenuButton
+                                    asChild
+                                    className={` ${
+                                        isActive('product')
+                                            ? 'bg-green-400 text-white hover:bg-green-400 hover:text-white'
+                                            : ''
+                                    }`}
+                                >
                                     <Link href={'/dashboard/product'}>
                                         <Store />
                                         <span>Product</span>
@@ -103,8 +121,15 @@ export default function DashboardSidebar({ user }: DashboardSideNavProps) {
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                             <SidebarMenuItem className="flex items-center justify-center">
-                                <SidebarMenuButton asChild>
-                                    <Link href={'/'}>
+                                <SidebarMenuButton
+                                    asChild
+                                    className={` ${
+                                        isActive('sales')
+                                            ? 'bg-green-400 text-white hover:bg-green-400 hover:text-white'
+                                            : ''
+                                    }`}
+                                >
+                                    <Link href={'/dashboard/sales'}>
                                         <CirclePercent />
                                         <span>Sales</span>
                                     </Link>
@@ -118,24 +143,45 @@ export default function DashboardSidebar({ user }: DashboardSideNavProps) {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem className="flex items-center justify-center">
-                                <SidebarMenuButton asChild>
-                                    <Link href={'/'}>
+                                <SidebarMenuButton
+                                    asChild
+                                    className={` ${
+                                        isActive('payment')
+                                            ? 'bg-green-400 text-white hover:bg-green-400 hover:text-white'
+                                            : ''
+                                    }`}
+                                >
+                                    <Link href={'/dashboard/payment'}>
                                         <CreditCard />
                                         <span>Payment</span>
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                             <SidebarMenuItem className="flex items-center justify-center">
-                                <SidebarMenuButton asChild>
-                                    <Link href={'/'}>
+                                <SidebarMenuButton
+                                    asChild
+                                    className={` ${
+                                        isActive('returns')
+                                            ? 'bg-green-400 text-white hover:bg-green-400 hover:text-white'
+                                            : ''
+                                    }`}
+                                >
+                                    <Link href={'/dashboard/returns'}>
                                         <HandCoins />
                                         <span>Returns</span>
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                             <SidebarMenuItem className="flex items-center justify-center">
-                                <SidebarMenuButton asChild>
-                                    <Link href={'/'}>
+                                <SidebarMenuButton
+                                    asChild
+                                    className={` ${
+                                        isActive('invoice')
+                                            ? 'bg-green-400 text-white hover:bg-green-400 hover:text-white'
+                                            : ''
+                                    }`}
+                                >
+                                    <Link href={'/dashboard/invoice'}>
                                         <NotebookText />
                                         <span>Invoice</span>
                                     </Link>
@@ -143,8 +189,15 @@ export default function DashboardSidebar({ user }: DashboardSideNavProps) {
                             </SidebarMenuItem>
 
                             <SidebarMenuItem className="flex items-center justify-center">
-                                <SidebarMenuButton asChild>
-                                    <Link href={'/'}>
+                                <SidebarMenuButton
+                                    asChild
+                                    className={` ${
+                                        isActive('refunds')
+                                            ? 'bg-green-400 text-white hover:bg-green-400 hover:text-white'
+                                            : ''
+                                    }`}
+                                >
+                                    <Link href={'/dashboard/refunds'}>
                                         <ListRestart />
                                         <span>Refunds</span>
                                     </Link>
@@ -262,7 +315,6 @@ export default function DashboardSidebar({ user }: DashboardSideNavProps) {
                                                 src={user.image || 'https://github.com/shadcn.png'}
                                                 alt={user.name || ''}
                                             />
-                                            <AvatarFallback>{nameFallback}</AvatarFallback>
                                         </Avatar>
                                         <SidebarMenuButton
                                             className={`flex justify-between hover:bg-transparent ${!open && 'hidden'}`}

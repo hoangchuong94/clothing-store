@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-interface CustomSelectProps<T> {
+interface PopoverSelectProps<T> {
     items: T[];
     value: T;
     getItemName: (item: T) => string;
@@ -17,14 +17,14 @@ interface CustomSelectProps<T> {
     disabled?: boolean;
 }
 
-export default function CustomSelect<T>({
+export default function PopoverSelect<T>({
     items = [],
     value,
     getItemName,
     getKey,
     onChange,
     disabled = false,
-}: CustomSelectProps<T>) {
+}: PopoverSelectProps<T>) {
     const [open, setOpen] = React.useState(false);
     const selectedItemName = React.useMemo(() => (value ? getItemName(value) : 'Select item'), [value, getItemName]);
 

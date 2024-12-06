@@ -28,7 +28,7 @@ export default async function RootLayout({
     return (
         <SidebarProvider defaultOpen={defaultOpen || true}>
             <DashboardSidebar user={session.user} />
-            <SidebarInset>
+            <SidebarInset className="custom-scrollbar">
                 <div className="flex h-14 items-center justify-between px-2">
                     <div className="flex items-center justify-center">
                         <SidebarTrigger />
@@ -38,7 +38,6 @@ export default async function RootLayout({
                         <LinkHierarchy />
                     </div>
                 </div>
-
                 {children}
             </SidebarInset>
         </SidebarProvider>

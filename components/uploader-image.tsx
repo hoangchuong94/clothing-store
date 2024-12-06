@@ -51,7 +51,7 @@ export default function UploadImage({ file, setUrl, onChange }: UploadImageProps
     return (
         <>
             <SingleImageDropzone
-                className="h-[300px] w-[300px] bg-white"
+                className="bg-white md:h-[160px] md:w-[160px] lg:h-[200px] lg:w-[200px] xl:h-[250px] xl:w-[250px]"
                 value={file}
                 onChange={(newFile) => {
                     setIsAutoUpdate(true);
