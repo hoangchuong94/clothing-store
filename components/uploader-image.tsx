@@ -3,15 +3,16 @@
 import { useEffect, useState, useCallback } from 'react';
 import { SingleImageDropzone } from '@/components/single-image-dropzone';
 import { useEdgeStore } from '@/lib/edgestore';
-import { Progress } from '@/components/ui/progress';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface UploadImageProps {
     file: File | string;
     onChange: (file: File | string) => void;
     setUrl: React.Dispatch<React.SetStateAction<string>>;
+    className?: string;
 }
 
-export default function UploadImage({ file, setUrl, onChange }: UploadImageProps) {
+export default function UploadImage({ file, setUrl, onChange, className }: UploadImageProps) {
     const { edgestore } = useEdgeStore();
     const [isAutoUpdate, setIsAutoUpdate] = useState(true);
     const [progress, setProgress] = useState(0);
@@ -49,9 +50,8 @@ export default function UploadImage({ file, setUrl, onChange }: UploadImageProps
     }, [file, isAutoUpdate, handleUpload, setUrl]);
 
     return (
-        <>
+        <div className={className}>
             <SingleImageDropzone
-                className="bg-white md:h-[160px] md:w-[160px] lg:h-[200px] lg:w-[200px] xl:h-[250px] xl:w-[250px]"
                 value={file}
                 onChange={(newFile) => {
                     setIsAutoUpdate(true);
@@ -62,7 +62,8 @@ export default function UploadImage({ file, setUrl, onChange }: UploadImageProps
                     maxSize: 1000000,
                 }}
             />
+
             {/* <Progress className="mt-0 h-2 w-[300px]" value={!file ? 0 : progress} /> */}
-        </>
+        </div>
     );
 }

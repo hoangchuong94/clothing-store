@@ -9,7 +9,7 @@ import { twMerge } from 'tailwind-merge';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 const variants = {
-    base: 'relative rounded-md aspect-square flex justify-center items-center flex-col cursor-pointer min-h-[100px] min-w-[100px] border border-dashed border-gray-400 dark:border-gray-300 transition-colors duration-200 ease-in-out',
+    base: 'relative  rounded-md aspect-square flex justify-center items-center flex-col  min-h-[60px] min-w-[60px] cursor-pointer border border-dashed border-gray-400 dark:border-gray-300 transition-colors duration-200 ease-in-out',
     image: 'border-0 p-0 w-full h-full relative shadow-md bg-slate-200 dark:bg-slate-900 rounded-md',
     active: 'border-2',
     disabled: 'bg-gray-200 border-gray-300 cursor-default pointer-events-none bg-opacity-30 dark:bg-gray-700',
@@ -130,10 +130,26 @@ const MultiImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
 
         return (
             <div>
-                <Carousel className="mx-8">
-                    <CarouselContent>
+                <Carousel className="flex items-center justify-center">
+                    <CarouselContent
+                        className={`${value && value?.length === 0 && 'flex items-center justify-center'}`}
+                    >
+                        <CarouselItem className={`${value && value?.length > 0 ? 'basis-1/3' : 'h-[100px] w-[100px]'}`}>
+                            {(!value || value.length < (dropzoneOptions?.maxFiles ?? 0)) && (
+                                <div
+                                    {...getRootProps({
+                                        className: dropZoneClassName,
+                                    })}
+                                >
+                                    <input ref={ref} {...getInputProps()} />
+                                    <div className="flex flex-col items-center justify-center text-xs text-gray-400">
+                                        <Plus />
+                                    </div>
+                                </div>
+                            )}
+                        </CarouselItem>
                         {value?.map(({ file, progress }, index) => (
-                            <CarouselItem key={index} className="basis-1/3">
+                            <CarouselItem key={index} className="basis-1/3 hover:cursor-grab">
                                 <div key={index} className={variants.image + ' aspect-square'}>
                                     <Image
                                         className="h-full w-full rounded-md object-cover"
@@ -235,26 +251,12 @@ const MultiImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
                                 </div>
                             </CarouselItem>
                         ))}
-                        <CarouselItem className="basis-1/3">
-                            {(!value || value.length < (dropzoneOptions?.maxFiles ?? 0)) && (
-                                <div
-                                    {...getRootProps({
-                                        className: dropZoneClassName,
-                                    })}
-                                >
-                                    <input ref={ref} {...getInputProps()} />
-                                    <div className="flex flex-col items-center justify-center text-xs text-gray-400">
-                                        <Plus />
-                                    </div>
-                                </div>
-                            )}
-                        </CarouselItem>
                     </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
+                    <CarouselPrevious className="left-[-14px]" />
+                    <CarouselNext className="right-[-14px]" />
                 </Carousel>
                 {/* Error Text */}
-                <div className="mt-1 text-sm text-red-500">{customError ?? errorMessage}</div>
+                <div className="mt-1 text-xs text-red-500">{customError ?? errorMessage}</div>
             </div>
         );
     },

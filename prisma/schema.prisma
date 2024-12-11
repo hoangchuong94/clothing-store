@@ -26,7 +26,7 @@ model User {
   updatedAt         DateTime      @updatedAt @map(name: "updated_at")
   role              UserRole      @default(USER) 
   accounts          Account[]
-  sessions      Session[]
+  sessions          Session[]
 
   @@map(name: "users")
 }
@@ -53,22 +53,22 @@ model Account {
 }
 
 model Session {
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionToken      String   @unique
+  userId            String
+  expires           DateTime
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
-  id String @id @default(cuid())
-  email String
-  token String @unique
-  expires DateTime
+  id                String @id @default(cuid())
+  email             String
+  token             String @unique
+  expires           DateTime
 
-  @@unique([email, token])
+ @@unique([email, token])
 }
 
 model Category {
@@ -95,36 +95,36 @@ model SubCategory {
 }
 
 model DetailCategory {
-  id            String     @id @default(cuid())
-  name          String
-  createdAt     DateTime   @default(now()) @map(name: "created_at")
-  updatedAt     DateTime   @updatedAt @map(name: "updated_at")
-  subCategoryId String     @map("sub_category_id")
-  subCategory   SubCategory @relation(fields: [subCategoryId], references: [id])
-  products      Product[]  // Một DetailCategory có thể có nhiều Product
+  id                String     @id @default(cuid())
+  name              String
+  createdAt         DateTime   @default(now()) @map(name: "created_at")
+  updatedAt         DateTime   @updatedAt @map(name: "updated_at")
+  subCategoryId     String     @map("sub_category_id")
+  subCategory       SubCategory @relation(fields: [subCategoryId], references: [id])
+  products          Product[]  
 
   @@map("detail_categories")
 }
 
 model Product {
-  id                String        @id @default(cuid())
+  id                String         @id @default(cuid())
   name              String
   description       String
   type              String
   price             Float
   quantity          Int
   capacity          Int
+  hasColors         Boolean        @default(false) 
   thumbnail         String
-  createdAt         DateTime      @default(now()) @map(name: "created_at")
-  updatedAt         DateTime      @updatedAt @map(name: "updated_at")
-  detailCategoryId  String        @map("detail_category_id")
+  createdAt         DateTime       @default(now()) @map(name: "created_at")
+  updatedAt         DateTime       @updatedAt @map(name: "updated_at")
+  detailCategoryId  String         @map("detail_category_id")
   detailCategory    DetailCategory @relation(fields: [detailCategoryId], references: [id])
   images            ProductImage[]
-  colors            ProductColor[]
+  colors            ProductColor[] 
   promotions        ProductPromotion[]
 
   @@map("products")
-  @@unique([name, price])
 }
 
 model Color {
@@ -139,10 +139,10 @@ model Color {
 }
 
 model ProductColor {
-  productId String
-  colorId   String
-  product   Product @relation(fields: [productId], references: [id])
-  color     Color   @relation(fields: [colorId], references: [id])
+  productId         String
+  colorId           String
+  product           Product @relation(fields: [productId], references: [id])
+  color             Color   @relation(fields: [colorId], references: [id])
 
   @@id([productId, colorId])
   @@map("product_colors")
@@ -160,10 +160,10 @@ model Image {
 }
 
 model ProductImage {
-  productId String
-  imageId   String
-  product   Product @relation(fields: [productId], references: [id])
-  image     Image   @relation(fields: [imageId], references: [id])
+  productId         String
+  imageId           String
+  product           Product @relation(fields: [productId], references: [id])
+  image             Image   @relation(fields: [imageId], references: [id])
 
   @@id([productId, imageId])
   @@map("product_images")
@@ -184,10 +184,10 @@ model Promotion {
 }
 
 model ProductPromotion {
-  productId   String
-  promotionId String
-  product     Product   @relation(fields: [productId], references: [id])
-  promotion   Promotion @relation(fields: [promotionId], references: [id])
+  productId         String
+  promotionId       String
+  product           Product   @relation(fields: [productId], references: [id])
+  promotion         Promotion @relation(fields: [promotionId], references: [id])
 
   @@id([productId, promotionId])
   @@map("product_promotions")

@@ -5,9 +5,9 @@ import Image from 'next/image';
 import * as React from 'react';
 import { useDropzone, type DropzoneOptions } from 'react-dropzone';
 import { twMerge } from 'tailwind-merge';
-
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 const variants = {
-    base: 'relative rounded-md flex justify-center items-center flex-col cursor-pointer min-h-[100px] min-w-[100px] border border-dashed border-gray-400 dark:border-gray-300 transition-colors duration-200 ease-in-out',
+    base: 'relative rounded-md flex justify-center items-center flex-col cursor-pointer h-full w-full border border-dashed border-gray-400 dark:border-gray-300 transition-colors duration-200 ease-in-out',
     image: 'border-0 p-0 min-h-0 min-w-0 relative shadow-md bg-slate-200 dark:bg-slate-900 rounded-md',
     active: 'border-2',
     disabled: 'bg-gray-200 border-gray-300 cursor-default pointer-events-none bg-opacity-30 dark:bg-gray-700',
@@ -97,49 +97,52 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
 
         return (
             <div>
-                <div
-                    {...getRootProps({
-                        className: dropZoneClassName,
-                        style: {
-                            width,
-                            height,
-                        },
-                    })}
-                >
-                    <input ref={ref} {...getInputProps()} />
-                    {imageUrl ? (
-                        <Image
-                            className="h-full w-full rounded-md object-cover"
-                            src={imageUrl}
-                            alt={acceptedFiles[0]?.name || ''}
-                            width={500}
-                            height={500}
-                        />
-                    ) : (
-                        <div className="flex flex-col items-center justify-center text-xs text-gray-400">
-                            <UploadCloudIcon className="mb-2 h-7 w-7" />
-                            <div className="text-gray-400">drag & drop to upload</div>
-                            <div className="mt-3">
-                                <Button type="button" disabled={disabled}>
-                                    select
-                                </Button>
+                <AspectRatio ratio={1 / 1}>
+                    <div
+                        {...getRootProps({
+                            className: dropZoneClassName,
+                            style: {
+                                width,
+                                height,
+                            },
+                        })}
+                    >
+                        <input ref={ref} {...getInputProps()} />
+                        {imageUrl ? (
+                            <Image
+                                className="h-full w-full rounded-md object-cover"
+                                src={imageUrl}
+                                alt={acceptedFiles[0]?.name || ''}
+                                width={500}
+                                height={500}
+                            />
+                        ) : (
+                            <div className="flex flex-col items-center justify-center text-xs text-gray-400">
+                                <UploadCloudIcon className="mb-2 h-7 w-7" />
+                                <div className="text-gray-400">drag & drop to upload</div>
+                                <div className="mt-3">
+                                    <Button type="button" disabled={disabled}>
+                                        select
+                                    </Button>
+                                </div>
                             </div>
-                        </div>
-                    )}
-                    {imageUrl && !disabled && (
-                        <div
-                            className="group absolute right-0 top-0 -translate-y-1/4 translate-x-1/4 transform"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                void onChange?.(undefined);
-                            }}
-                        >
-                            <div className="flex h-5 w-5 items-center justify-center rounded-md border border-solid border-gray-500 bg-white transition-all duration-300 hover:h-6 hover:w-6 dark:border-gray-400 dark:bg-black">
-                                <X className="text-gray-500 dark:text-gray-400" width={16} height={16} />
+                        )}
+                        {imageUrl && !disabled && (
+                            <div
+                                className="group absolute right-0 top-0 -translate-y-1/4 translate-x-1/4 transform"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    void onChange?.(undefined);
+                                }}
+                            >
+                                <div className="flex h-5 w-5 items-center justify-center rounded-md border border-solid border-gray-500 bg-white transition-all duration-300 hover:h-6 hover:w-6 dark:border-gray-400 dark:bg-black">
+                                    <X className="text-gray-500 dark:text-gray-400" width={16} height={16} />
+                                </div>
                             </div>
-                        </div>
-                    )}
-                </div>
+                        )}
+                    </div>
+                </AspectRatio>
+
                 <div className="mt-2 text-xs text-red-500">{errorMessage}</div>
             </div>
         );

@@ -21,7 +21,7 @@ import { productDetails } from '@/data/placeholder';
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 
 export default function page() {
-    return <DataTable data={productDetails} columns={columns} />;
+    return <DataTable data={productDetails} columns={columns} className="px-4" />;
 }
 
 export const columns: ColumnDef<ProductDetail>[] = [
@@ -97,8 +97,6 @@ export const columns: ColumnDef<ProductDetail>[] = [
             );
         },
         cell: ({ row }) => {
-            const product = row.original;
-
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>

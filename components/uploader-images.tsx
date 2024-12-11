@@ -9,9 +9,10 @@ interface UploadImagesProps {
     setUrls: React.Dispatch<React.SetStateAction<string[]>>;
     initialFileStates: FileState[];
     onChange: (...event: any[]) => void;
+    className?: string;
 }
 
-export default function UploadImages({ setUrls, initialFileStates, onChange }: UploadImagesProps) {
+export default function UploadImages({ setUrls, initialFileStates, onChange, className }: UploadImagesProps) {
     const { edgestore } = useEdgeStore();
     const [fileStates, setFileStates] = useState<FileState[]>(initialFileStates);
 
@@ -100,7 +101,6 @@ export default function UploadImages({ setUrls, initialFileStates, onChange }: U
     }, [fileStates, onChange]);
 
     useEffect(() => {
-        //reset form
         if (initialFileStates.length === 0) {
             setFileStates([]);
         }
@@ -108,7 +108,7 @@ export default function UploadImages({ setUrls, initialFileStates, onChange }: U
 
     return (
         <MultiImageDropzone
-            className="bg-white"
+            className={className}
             value={fileStates}
             dropzoneOptions={{
                 maxFiles: 6,

@@ -41,51 +41,53 @@ export default function PopoverSelect<T>({
     );
 
     return (
-        <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-                <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    aria-haspopup="listbox"
-                    aria-labelledby="custom-select-button"
-                    className="justify-between"
-                    disabled={disabled}
-                >
-                    {selectedItemName}
-                    <ChevronsUpDown className={cn('ml-2 h-4 w-4 shrink-0 opacity-50')} />
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="p-0">
-                <Command>
-                    <CommandInput placeholder="Search..." disabled={disabled} />
-                    <CommandList>
-                        <CommandEmpty>No data</CommandEmpty>
-                        <CommandGroup>
-                            {items.map((item) => (
-                                <CommandItem
-                                    className="cursor-pointer"
-                                    key={getKey(item)}
-                                    value={getItemName(item)}
-                                    onSelect={() => handleSelect(getItemName(item))}
-                                    disabled={disabled}
-                                    aria-selected={value && getItemName(value) === getItemName(item) ? true : false}
-                                >
-                                    <Check
-                                        className={cn(
-                                            'mr-2 h-4 w-4',
-                                            value && getItemName(value) === getItemName(item)
-                                                ? 'opacity-100'
-                                                : 'opacity-0',
-                                        )}
-                                    />
-                                    {getItemName(item)}
-                                </CommandItem>
-                            ))}
-                        </CommandGroup>
-                    </CommandList>
-                </Command>
-            </PopoverContent>
-        </Popover>
+        <div>
+            <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                    <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        aria-haspopup="listbox"
+                        aria-labelledby="custom-select-button"
+                        className="w-full justify-between"
+                        disabled={disabled}
+                    >
+                        {selectedItemName}
+                        <ChevronsUpDown className={cn('ml-2 h-4 w-4 shrink-0 opacity-50')} />
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent className="p-0">
+                    <Command>
+                        <CommandInput placeholder="Search..." disabled={disabled} />
+                        <CommandList>
+                            <CommandEmpty>No data</CommandEmpty>
+                            <CommandGroup>
+                                {items.map((item) => (
+                                    <CommandItem
+                                        className="cursor-pointer"
+                                        key={getKey(item)}
+                                        value={getItemName(item)}
+                                        onSelect={() => handleSelect(getItemName(item))}
+                                        disabled={disabled}
+                                        aria-selected={value && getItemName(value) === getItemName(item) ? true : false}
+                                    >
+                                        <Check
+                                            className={cn(
+                                                'mr-2 h-4 w-4',
+                                                value && getItemName(value) === getItemName(item)
+                                                    ? 'opacity-100'
+                                                    : 'opacity-0',
+                                            )}
+                                        />
+                                        {getItemName(item)}
+                                    </CommandItem>
+                                ))}
+                            </CommandGroup>
+                        </CommandList>
+                    </Command>
+                </PopoverContent>
+            </Popover>
+        </div>
     );
 }

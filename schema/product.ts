@@ -37,58 +37,58 @@ export const CreateProductSchema = z.object({
         .min(6, 'Product description must be more than 6 characters')
         .max(150, 'Product description must be less than 150 characters'),
 
-    type: z
-        .string({ required_error: 'Type product is required' })
-        .min(1, 'Type product is required')
-        .min(3, 'Product type must be more than 3 characters')
-        .max(50, 'Type product must be less than 50 characters'),
+    // type: z
+    //     .string({ required_error: 'Type product is required' })
+    //     .min(1, 'Type product is required')
+    //     .min(3, 'Product type must be more than 3 characters')
+    //     .max(50, 'Type product must be less than 50 characters'),
 
     price: z.coerce.number().min(1, 'Price is required').positive('Price must be a positive number'),
 
-    quantity: z.coerce
-        .number()
-        .min(1, 'Quantity is required')
-        .positive('Quantity must be a positive number')
-        .int('Quantity must be an integer'),
+    // quantity: z.coerce
+    //     .number()
+    //     .min(1, 'Quantity is required')
+    //     .positive('Quantity must be a positive number')
+    //     .int('Quantity must be an integer'),
 
-    capacity: z.coerce
-        .number()
-        .min(1, 'Capacity is required')
-        .positive('Capacity must be a positive number')
-        .int('Capacity must be an integer'),
+    // capacity: z.coerce
+    //     .number()
+    //     .min(1, 'Capacity is required')
+    //     .positive('Capacity must be a positive number')
+    //     .int('Capacity must be an integer'),
 
-    colors: z
-        .array(
-            z.object({
-                id: z.string(),
-                name: z.string(),
-                code: z.string(),
-                createdAt: z.date(),
-                updatedAt: z.date(),
-            }),
-        )
-        .nonempty('At least one color must be selected'),
+    // colors: z
+    //     .array(
+    //         z.object({
+    //             id: z.string(),
+    //             name: z.string(),
+    //             code: z.string(),
+    //             createdAt: z.date(),
+    //             updatedAt: z.date(),
+    //         }),
+    //     )
+    //     .nonempty('At least one color must be selected'),
 
-    promotions: z.array(
-        z.object({
-            id: z.string(),
-            name: z.string(),
-            description: z.string(),
-            startDay: z.date(),
-            endDay: z.date(),
-            createdAt: z.date(),
-            updatedAt: z.date(),
-        }),
-    ),
+    // promotions: z.array(
+    //     z.object({
+    //         id: z.string(),
+    //         name: z.string(),
+    //         description: z.string(),
+    //         startDay: z.date(),
+    //         endDay: z.date(),
+    //         createdAt: z.date(),
+    //         updatedAt: z.date(),
+    //     }),
+    // ),
 
     thumbnailFile: ThumbnailSchema,
     imageFiles: ImagesSchema,
 
     size: z.array(z.string()),
-    gender: z.array(z.string()),
+    gender: z.string(),
 
-    stock: z.number(),
-    discount: z.number(),
+    stock: z.coerce.number().min(1, 'Stock is required').positive('Stock must be a positive number'),
+    discount: z.coerce.number().min(1, 'Discount is required').positive('Discount must be a positive number'),
     discountType: z.string(),
 
     categories: z.array(

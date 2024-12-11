@@ -227,71 +227,27 @@ export default function DashboardSidebar({ user }: DashboardSideNavProps) {
                                         <SidebarMenuSub>
                                             <SidebarMenuSubItem>
                                                 <Link href={'/#'}>
-                                                    <span>Setting</span>
+                                                    <span>title 1</span>
                                                 </Link>
                                             </SidebarMenuSubItem>
                                             <SidebarMenuSubItem>
                                                 <Link href={'/#'}>
-                                                    <span>Setting</span>
+                                                    <span>title 2</span>
                                                 </Link>
                                             </SidebarMenuSubItem>
                                             <SidebarMenuSubItem>
                                                 <Link href={'/#'}>
-                                                    <span>Setting</span>
+                                                    <span>title 3</span>
                                                 </Link>
                                             </SidebarMenuSubItem>
                                             <SidebarMenuSubItem>
                                                 <Link href={'/#'}>
-                                                    <span>Setting</span>
+                                                    <span>title 4</span>
                                                 </Link>
                                             </SidebarMenuSubItem>
                                             <SidebarMenuSubItem>
                                                 <Link href={'/#'}>
-                                                    <span>Setting</span>
-                                                </Link>
-                                            </SidebarMenuSubItem>
-                                        </SidebarMenuSub>
-                                    </CollapsibleContent>
-                                </SidebarMenuItem>
-                            </Collapsible>
-                            <Collapsible className="group/collapsible">
-                                <SidebarMenuItem
-                                    className={`hover:cursor-pointer ${!open && 'flex items-center justify-center'}`}
-                                >
-                                    <CollapsibleTrigger asChild className="hover:cursor-pointer">
-                                        <SidebarMenuButton asChild>
-                                            <div>
-                                                <Settings />
-                                                <span>Setting</span>
-                                                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                                            </div>
-                                        </SidebarMenuButton>
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent>
-                                        <SidebarMenuSub>
-                                            <SidebarMenuSubItem>
-                                                <Link href={'/#'}>
-                                                    <span>Setting</span>
-                                                </Link>
-                                            </SidebarMenuSubItem>
-                                            <SidebarMenuSubItem>
-                                                <Link href={'/#'}>
-                                                    <span>Setting</span>
-                                                </Link>
-                                            </SidebarMenuSubItem>
-                                            <SidebarMenuSubItem>
-                                                <Link href={'/#'}>
-                                                    <span>Setting</span>
-                                                </Link>
-                                            </SidebarMenuSubItem>
-                                            <SidebarMenuSubItem>
-                                                <Link href={'/#'}>
-                                                    <span>Setting</span>
-                                                </Link>
-                                            </SidebarMenuSubItem>
-                                            <SidebarMenuSubItem>
-                                                <Link href={'/#'}>
-                                                    <span>Setting</span>
+                                                    <span>title 5</span>
                                                 </Link>
                                             </SidebarMenuSubItem>
                                         </SidebarMenuSub>

@@ -70,7 +70,7 @@ interface RadioGroupFieldProps<TFieldValues extends FieldValues, TItem> extends 
 }
 
 interface SelectGroupFieldProps<TFieldValues extends FieldValues, TItem> extends UseControllerProps<TFieldValues> {
-    label: string;
+    label?: string;
     placeholder: string;
     items: TItem[];
     getItemKey: (item: TItem) => string | number;
@@ -102,11 +102,11 @@ export const GenericField = <TFieldValues extends FieldValues>({
         control={fieldProps.control}
         name={fieldProps.name as FieldPath<TFieldValues>}
         render={({ field }) => (
-            <FormItem className="flex flex-col">
-                {label && <FormLabel>{label}</FormLabel>}
-                {description && <FormDescription>{description}</FormDescription>}
-                <FormControl>{renderInput(field)}</FormControl>
-                <FormMessage />
+            <FormItem className="max-md:text-sm">
+                {label && <FormLabel className="max-md:text-sm">{label}</FormLabel>}
+                {description && <FormDescription className="max-md:text-sm">{description}</FormDescription>}
+                <FormControl className="max-md:text-sm">{renderInput(field)}</FormControl>
+                <FormMessage className="max-md:text-sm" />
             </FormItem>
         )}
     />
@@ -173,11 +173,7 @@ export const RadioGroupField = <TFieldValues extends FieldValues, TItem>({
             description={description}
             {...fieldProps}
             renderInput={(field) => (
-                <RadioGroup
-                    onValueChange={field.onChange}
-                    defaultValue={field.value[0]}
-                    className="flex flex-1 space-y-1"
-                >
+                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-1 space-y-1">
                     {items.map((item) => {
                         return (
                             <FormItem className="flex items-center space-x-3 space-y-0" key={getItemKey(item)}>
@@ -203,6 +199,8 @@ export const ToggleGroupField = <TFieldValues extends FieldValues, TItem>({
     className,
     ...fieldProps
 }: ToggleGroupFieldProps<TFieldValues, TItem>) => {
+    const memoizedItems = useMemo(() => items, [items]);
+    const memoizedRenderItem = useCallback((item: TItem) => renderItem(item), [renderItem]);
     return (
         <GenericField
             label={label}
@@ -290,7 +288,6 @@ export const PopoverSelectField = <TFieldValues extends FieldValues, TItem>({
     ...fieldProps
 }: PopoverSelectFieldProps<TFieldValues, TItem>) => {
     const memoizedItems = useMemo(() => items, [items]);
-
     const memoizedRenderItem = useCallback((item: TItem) => renderItem(item), [renderItem]);
 
     return (
@@ -343,13 +340,19 @@ export const PopoverCheckboxField = <TFieldValues extends FieldValues, TItem>({
 export const ImageField = <TFieldValues extends FieldValues>({
     label,
     setUrl,
+    className,
     ...fieldProps
 }: ImageFieldProps<TFieldValues>) => (
     <GenericField
         label={label}
         {...fieldProps}
         renderInput={(field) => (
-            <UploadImage file={field.value as File | string} onChange={field.onChange} setUrl={setUrl} />
+            <UploadImage
+                file={field.value as File | string}
+                onChange={field.onChange}
+                setUrl={setUrl}
+                className={className}
+            />
         )}
     />
 );
@@ -357,13 +360,21 @@ export const ImageField = <TFieldValues extends FieldValues>({
 export const ImagesField = <TFieldValues extends FieldValues>({
     label,
     setUrls,
+    className,
     ...fieldProps
 }: ImagesFieldProps<TFieldValues>) => (
     <GenericField
         label={label}
         {...fieldProps}
         renderInput={(field) => {
-            return <UploadImages setUrls={setUrls} onChange={field.onChange} initialFileStates={field.value} />;
+            return (
+                <UploadImages
+                    setUrls={setUrls}
+                    onChange={field.onChange}
+                    initialFileStates={field.value}
+                    className={className}
+                />
+            );
         }}
     />
 );

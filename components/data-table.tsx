@@ -25,11 +25,13 @@ import Link from 'next/link';
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
+    className?: string;
 }
 
 export function DataTable<TData extends { createdAt?: Date }, TValue>({
     columns,
     data,
+    className,
 }: DataTableProps<TData, TValue>) {
     console.log(data);
     const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -41,8 +43,6 @@ export function DataTable<TData extends { createdAt?: Date }, TValue>({
     const [rowSelection, setRowSelection] = React.useState({});
 
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>(undefined);
-
-    console.log();
 
     const filteredData = React.useMemo(() => {
         if (!dateRange || !dateRange.from || !dateRange.to) return data;
@@ -79,7 +79,7 @@ export function DataTable<TData extends { createdAt?: Date }, TValue>({
     });
 
     return (
-        <div>
+        <div className={className}>
             <div className="mb-4 flex justify-between space-x-2">
                 <Link href={'/dashboard/product/create'}>
                     <Button className="bg-green-400 text-white">Create Product</Button>
