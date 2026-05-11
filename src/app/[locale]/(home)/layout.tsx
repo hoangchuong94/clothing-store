@@ -1,8 +1,7 @@
 'use client';
 
-import { Footer } from '@/components/footer/Footer';
-import { Header } from '@/components/header/Header';
-import { HeaderProvider, useHeader } from '@/components/header/HeaderContext';
+import { Footer } from '@/components/layout/footer';
+import { Header, HeaderProvider, useHeader } from '@/components/layout/header';
 
 function HeaderWithState() {
   const { cart, auth, logout } = useHeader();

@@ -7,12 +7,12 @@
 
 import { useCallback, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '@/lib/client/redux/store';
+import { AppDispatch } from '@/features/cart/lib/redux/store';
 import {
   updateCartItemOptimistic,
   updateCartItemSuccess,
   updateCartItemError,
-} from '@/lib/client/redux/cartSlice';
+} from '@/features/cart/lib/redux/cartSlice';
 import { updateCartItem as updateCartItemAction } from '@/lib/server/actions/cart';
 
 interface UseUpdateCartItemOptions {

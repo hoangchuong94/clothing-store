@@ -8,12 +8,12 @@
 
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '@/lib/client/redux/store';
+import { AppDispatch } from '@/features/cart/lib/redux/store';
 import {
   addToCartOptimistic,
   addToCartSuccess,
   addToCartError,
-} from '@/lib/client/redux/cartSlice';
+} from '@/features/cart/lib/redux/cartSlice';
 import { addToCart as addToCartAction } from '@/lib/server/actions/cart';
 import { CartItem, AddToCartPayload } from '@/features/cart/types';
 

@@ -7,14 +7,14 @@
 
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from '@/lib/client/redux/store';
-import { initializeCart } from '@/lib/client/redux/cartSlice';
+import { AppDispatch } from '@/features/cart/lib/redux/store';
+import { initializeCart } from '@/features/cart/lib/redux/cartSlice';
 import {
   saveCartToLocalStorage,
   loadCartFromLocalStorage,
   isLocalStorageAvailable,
-} from '@/lib/client/utils/cart';
-import { selectCartItems } from '@/lib/client/redux/cartSlice';
+} from '@/features/cart/lib/client-utils';
+import { selectCartItems } from '@/features/cart/lib/redux/cartSlice';
 
 /**
  * Initialize cart from localStorage on app mount

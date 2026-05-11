@@ -7,12 +7,12 @@
 
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '@/lib/client/redux/store';
+import { AppDispatch } from '@/features/cart/lib/redux/store';
 import {
   removeCartItemOptimistic,
   removeCartItemSuccess,
   removeCartItemError,
-} from '@/lib/client/redux/cartSlice';
+} from '@/features/cart/lib/redux/cartSlice';
 import { removeCartItem as removeCartItemAction } from '@/lib/server/actions/cart';
 
 interface UseRemoveCartItemOptions {
