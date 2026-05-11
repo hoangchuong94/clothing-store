@@ -1,0 +1,231 @@
+import { Product } from '../types';
+
+export const PRODUCTS: Product[] = [
+  {
+    id: 'prod-001',
+    name: 'Classic Cotton T-Shirt',
+    price: 29.99,
+    stock: 150,
+    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop',
+    category: 'T-Shirts',
+    gender: 'unisex',
+    rating: 4.5,
+    reviews: 89,
+    variants: [
+      { id: 'size', name: 'Size', values: ['XS', 'S', 'M', 'L', 'XL', 'XXL'] },
+      { id: 'color', name: 'Color', values: ['Black', 'White', 'Navy', 'Gray'] },
+    ],
+  },
+  {
+    id: 'prod-002',
+    name: 'Slim Fit Denim Jeans',
+    price: 79.99,
+    stock: 85,
+    image:
+      'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80',
+    category: 'Pants',
+    gender: 'men',
+    rating: 4.7,
+    reviews: 156,
+    variants: [
+      { id: 'size', name: 'Size', values: ['28', '30', '32', '34', '36', '38'] },
+      { id: 'color', name: 'Color', values: ['Dark Blue', 'Light Blue', 'Black'] },
+    ],
+  },
+  {
+    id: 'prod-003',
+    name: 'Premium Leather Jacket',
+    price: 249.99,
+    stock: 25,
+    image:
+      'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80',
+    gender: 'unisex',
+    category: 'Outerwear',
+    rating: 4.9,
+    reviews: 45,
+    variants: [
+      { id: 'size', name: 'Size', values: ['XS', 'S', 'M', 'L', 'XL'] },
+      { id: 'color', name: 'Color', values: ['Black', 'Brown', 'Tan'] },
+    ],
+  },
+  {
+    id: 'prod-004',
+    name: 'Summer Shorts',
+    price: 39.99,
+    stock: 200,
+    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&h=500&fit=crop',
+    category: 'Pants',
+    gender: 'unisex',
+    rating: 4.6,
+    reviews: 73,
+    variants: [
+      { id: 'size', name: 'Size', values: ['XS', 'S', 'M', 'L', 'XL'] },
+      { id: 'color', name: 'Color', values: ['Navy', 'Khaki', 'Black', 'White'] },
+    ],
+  },
+  {
+    id: 'prod-005',
+    name: 'Winter Knit Sweater',
+    price: 89.99,
+    stock: 60,
+    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop',
+    category: 'Sweaters',
+    gender: 'unisex',
+    rating: 4.8,
+    reviews: 67,
+    variants: [
+      { id: 'size', name: 'Size', values: ['XS', 'S', 'M', 'L', 'XL', 'XXL'] },
+      { id: 'color', name: 'Color', values: ['Cream', 'Charcoal', 'Burgundy', 'Forest Green'] },
+    ],
+  },
+  {
+    id: 'prod-006',
+    name: 'Cyber Oversized Hoodie',
+    price: 89.99,
+    originalPrice: 129.99,
+    stock: 75,
+    image:
+      'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=600&q=80',
+    category: 'Hoodies',
+    badge: 'SALE',
+    rating: 4.8,
+    reviews: 124,
+    variants: [
+      { id: 'size', name: 'Size', values: ['XS', 'S', 'M', 'L', 'XL', 'XXL'] },
+      { id: 'color', name: 'Color', values: ['Black', 'Gray', 'White'] },
+    ],
+  },
+  {
+    id: 'prod-007',
+    name: 'Neon Grid T-Shirt',
+    price: 49.99,
+    stock: 120,
+    image:
+      'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=80',
+    category: 'T-Shirts',
+    gender: 'men',
+    badge: 'NEW',
+    rating: 4.9,
+    reviews: 89,
+    variants: [
+      { id: 'size', name: 'Size', values: ['XS', 'S', 'M', 'L', 'XL'] },
+      { id: 'color', name: 'Color', values: ['Black', 'White', 'Neon Green'] },
+    ],
+  },
+  {
+    id: 'prod-008',
+    name: 'Streetwear Cargo Pants',
+    price: 99.99,
+    originalPrice: 149.99,
+    stock: 90,
+    image:
+      'https://images.unsplash.com/photo-1521334884684-d80222895322?auto=format&fit=crop&w=600&q=80',
+    category: 'Pants',
+    gender: 'women',
+    badge: 'HOT',
+    rating: 4.7,
+    reviews: 156,
+    variants: [
+      { id: 'size', name: 'Size', values: ['XS', 'S', 'M', 'L', 'XL'] },
+      { id: 'color', name: 'Color', values: ['Black', 'Khaki', 'Olive'] },
+    ],
+  },
+  {
+    id: 'prod-009',
+    name: 'Premium Snapback Cap',
+    price: 39.99,
+    stock: 200,
+    image:
+      'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80',
+    category: 'Accessories',
+    gender: 'unisex',
+    rating: 4.6,
+    reviews: 73,
+    variants: [{ id: 'color', name: 'Color', values: ['Black', 'Navy', 'Red', 'White'] }],
+  },
+  {
+    id: 'prod-010',
+    name: 'Limited Edition Jersey',
+    price: 129.99,
+    stock: 50,
+    image:
+      'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80',
+    category: 'T-Shirts',
+    gender: 'women',
+    badge: 'LIMITED',
+    rating: 5.0,
+    reviews: 32,
+    variants: [
+      { id: 'size', name: 'Size', values: ['S', 'M', 'L', 'XL'] },
+      { id: 'color', name: 'Color', values: ['Black', 'White'] },
+    ],
+  },
+  {
+    id: 'prod-011',
+    name: 'Techwear Jacket',
+    price: 199.99,
+    stock: 30,
+    image:
+      'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=600&q=80',
+    category: 'Outerwear',
+    gender: 'unisex',
+    badge: 'NEW',
+    rating: 4.9,
+    reviews: 45,
+    variants: [
+      { id: 'size', name: 'Size', values: ['XS', 'S', 'M', 'L', 'XL'] },
+      { id: 'color', name: 'Color', values: ['Black', 'Gray'] },
+    ],
+  },
+  {
+    id: 'prod-012',
+    name: 'Vintage Denim',
+    price: 69.99,
+    stock: 50,
+    image:
+      'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=600&q=80',
+    category: 'Jeans',
+    gender: 'unisex',
+    badge: 'SALE',
+    rating: 4.8,
+    reviews: 145,
+  },
+  {
+    id: 'prod-013',
+    name: 'Cyber Backpack',
+    price: 89.99,
+    stock: 80,
+    image:
+      'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80',
+    category: 'Accessories',
+    gender: 'unisex',
+    rating: 4.7,
+    reviews: 103,
+    variants: [{ id: 'color', name: 'Color', values: ['Black', 'Olive', 'Gray'] }],
+  },
+];
+
+export function getAllProducts(): Promise<Product[]> {
+  return Promise.resolve(PRODUCTS);
+}
+
+export function getProductById(productId: string): Promise<Product | undefined> {
+  return Promise.resolve(PRODUCTS.find((product) => product.id === productId));
+}
+
+export function getProducts(productIds: string[]): Promise<Product[]> {
+  return Promise.resolve(PRODUCTS.filter((product) => productIds.includes(product.id)));
+}
+
+export function checkStock(
+  productId: string,
+  quantity: number,
+): Promise<{ isAvailable: boolean; available: number }> {
+  const product = PRODUCTS.find((item) => item.id === productId);
+  const available = product?.stock ?? 0;
+
+  return Promise.resolve({
+    isAvailable: available >= quantity,
+    available,
+  });
+}

@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "badge": "Products",
+    "heading": "Shop the latest drops",
+    "description": "Browse inventory with type-safe filters, synced URL state, and server-driven product data."
+  },
+  "filters": {
+    "title": "Filters",
+    "heading": "Refine your search",
+    "subtitle": "Fine-tune products, sort quickly, and preview results without reload.",
+    "category": "Category",
+    "badge": "Badge",
+    "gender": "Gender",
+    "sort": "Sort",
+    "price": "Price range",
+    "placeholder": {
+      "category": "All categories",
+      "badge": "Any badge",
+      "gender": "All genders",
+      "sort": "Default"
+    },
+    "clear": "Clear filters",
+    "activeCount": "{count} active",
+    "sortOptions": {
+      "priceAsc": "Price: Low to High",
+      "priceDesc": "Price: High to Low",
+      "ratingDesc": "Top Rated"
+    },
+    "genderOptions": {
+      "men": "Men",
+      "women": "Women",
+      "unisex": "Unisex"
+    },
+    "mobile": {
+      "button": "Filters",
+      "title": "Filter products",
+      "description": "Update filters and sort order with instant preview."
+    }
+  }
+}

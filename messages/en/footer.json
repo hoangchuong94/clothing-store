@@ -1,0 +1,39 @@
+{
+  "shop": {
+    "title": "Shop",
+    "newArrivals": "New Arrivals",
+    "bestSellers": "Best Sellers",
+    "allCollections": "All Collections",
+    "limitedEdition": "Limited Edition"
+  },
+  "company": {
+    "title": "Company",
+    "about": "About Us",
+    "careers": "Careers",
+    "blog": "Blog",
+    "press": "Press"
+  },
+  "support": {
+    "title": "Support",
+    "contact": "Contact Us",
+    "faq": "FAQ",
+    "shipping": "Shipping Info",
+    "returns": "Returns"
+  },
+  "legal": {
+    "title": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "cookies": "Cookies",
+    "accessibility": "Accessibility"
+  },
+  "social": {
+    "title": "Follow Us",
+    "instagram": "Instagram",
+    "twitter": "Twitter",
+    "facebook": "Facebook",
+    "youtube": "YouTube"
+  },
+  "copyright": "© 2026 Cyber Brand. All rights reserved.",
+  "brand": "Streetwear × Cyber × Culture. Wear your digital soul."
+}

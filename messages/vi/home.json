@@ -1,0 +1,62 @@
+{
+  "hero": {
+    "badge": "Thời trang cho Gen Z",
+    "headline1": "Mặc lên",
+    "headline2": "Linh Hồn Kỹ Thuật Số",
+    "description": "Thời trang đường phố gặp cyber. Những mẫu mới táo bạo. Bộ sưu tập giới hạn. Vibe vô tận. Phong cách của bạn, được khuếch đại.",
+    "primaryCta": "Mua Ngay",
+    "secondaryCta": "Khám Phá Bộ Sưu Tập",
+    "scrollIndicator": "Cuộn để khám phá"
+  },
+  "categories": {
+    "title": "Bộ Sưu Tập Được Chọn Lọc",
+    "description": "Tìm vibe của bạn trong các danh mục được lựa chọn kỹ lưỡng của chúng tôi",
+    "badge": "MUA THEO DANH MỤC",
+    "explore": "Khám Phá"
+  },
+  "featured": {
+    "title": "Drops Nổi Bật",
+    "description": "Những bộ sưu tập hot nhất mà mọi người đang nói tới",
+    "badge": "ĐANG TRENDING",
+    "viewAll": "Xem Tất Cả",
+    "viewAllMobile": "Xem Tất Cả Sản Phẩm"
+  },
+  "newArrivals": {
+    "title": "Hàng Mới Về",
+    "description": "Những bộ sưu tập mới kế đến kệ",
+    "badge": "BỘ SƯU TẬP MỚI",
+    "viewAll": "Xem Thêm"
+  },
+  "newsletter": {
+    "title": "Cập Nhật Liên Tục",
+    "description": "Nhận quyền truy cập độc quyền, sơ cấp & mẹo nội bộ trực tiếp vào hộp thư của bạn",
+    "placeholder": "Nhập email của bạn",
+    "button": "Đăng Ký",
+    "subtitle": "Không spam, chỉ có vibe"
+  },
+  "testimonials": {
+    "title": "Mọi Người Nói Gì",
+    "description": "Tham gia hàng ngàn khách hàng hài lòng diện trang phục của chúng tôi",
+    "badge": "ĐƯỢC YÊU THÍCH BỞI GEN Z",
+    "trust": {
+      "customers": "Khách Hàng Hài Lòng",
+      "satisfaction": "Tỷ Lệ Hài Lòng",
+      "countries": "Quốc Gia",
+      "support": "Hỗ Trợ Khách Hàng"
+    }
+  },
+  "promotionBanner": {
+    "badge": "Ưu Đãi Giới Hạn Thời Gian",
+    "headline1": "Cyber",
+    "headline2": "Bộ Sưu Tập Hè",
+    "description": "Giảm 40% cho tất cả bộ sưu tập streetwear & cyber. Sử dụng mã:",
+    "code": "CYBERGEN40",
+    "primaryCta": "Mua Bộ Sưu Tập",
+    "secondaryCta": "Xem Điều Khoản",
+    "stats": {
+      "products": "Sản Phẩm",
+      "discount": "Giảm Giá",
+      "endsIn": "Kết Thúc Trong"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "shop": {
+    "title": "Cửa Hàng",
+    "newArrivals": "Hàng Mới Về",
+    "bestSellers": "Bán Chạy Nhất",
+    "allCollections": "Tất Cả Bộ Sưu Tập",
+    "limitedEdition": "Phiên Bản Giới Hạn"
+  },
+  "company": {
+    "title": "Công Ty",
+    "about": "Về Chúng Tôi",
+    "careers": "Việc Làm",
+    "blog": "Blog",
+    "press": "Báo Chí"
+  },
+  "support": {
+    "title": "Hỗ Trợ",
+    "contact": "Liên Hệ Chúng Tôi",
+    "faq": "Câu Hỏi Thường Gặp",
+    "shipping": "Thông Tin Giao Hàng",
+    "returns": "Trả Hàng"
+  },
+  "legal": {
+    "title": "Pháp Lý",
+    "privacy": "Chính Sách Bảo Mật",
+    "terms": "Điều Khoản Dịch Vụ",
+    "cookies": "Cookie",
+    "accessibility": "Khả Năng Truy Cập"
+  },
+  "social": {
+    "title": "Theo Dõi Chúng Tôi",
+    "instagram": "Instagram",
+    "twitter": "Twitter",
+    "facebook": "Facebook",
+    "youtube": "YouTube"
+  },
+  "copyright": "© 2026 Cyber Brand. Bản quyền được bảo lưu.",
+  "brand": "Streetwear × Cyber × Văn Hóa. Mặc lên linh hồn kỹ thuật số của bạn."
+}

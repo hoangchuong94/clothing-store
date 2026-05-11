@@ -1,0 +1,62 @@
+{
+  "hero": {
+    "badge": "Fashion for Gen Z",
+    "headline1": "Wear Your",
+    "headline2": "Digital Soul",
+    "description": "Fashion meets cyber. Bold new arrivals. Limited collections. Infinite vibe. Your style, amplified.",
+    "primaryCta": "Shop Now",
+    "secondaryCta": "Explore Collections",
+    "scrollIndicator": "Scroll to explore"
+  },
+  "categories": {
+    "title": "Curated Collections",
+    "description": "Find your vibe across our handpicked categories",
+    "badge": "SHOP BY CATEGORY",
+    "explore": "Explore"
+  },
+  "featured": {
+    "title": "Featured Drops",
+    "description": "The hottest pieces everyone's talking about",
+    "badge": "TRENDING NOW",
+    "viewAll": "View All",
+    "viewAllMobile": "View All Products"
+  },
+  "newArrivals": {
+    "title": "Latest Arrivals",
+    "description": "Fresh drops hitting the shelves",
+    "badge": "NEW COLLECTION",
+    "viewAll": "See More"
+  },
+  "newsletter": {
+    "title": "Stay in the Loop",
+    "description": "Get exclusive drops, early access & insider tips straight to your inbox",
+    "placeholder": "Enter your email",
+    "button": "Subscribe",
+    "subtitle": "No spam, just vibes"
+  },
+  "testimonials": {
+    "title": "What People Are Saying",
+    "description": "Join thousands of satisfied customers wearing our clothing",
+    "badge": "LOVED BY GEN Z",
+    "trust": {
+      "customers": "Happy Customers",
+      "satisfaction": "Satisfaction Rate",
+      "countries": "Countries",
+      "support": "Customer Support"
+    }
+  },
+  "promotionBanner": {
+    "badge": "Limited Time Offer",
+    "headline1": "Cyber",
+    "headline2": "Summer Collection",
+    "description": "Get 40% off on all streetwear & cyber collection. Use code:",
+    "code": "CYBERGEN40",
+    "primaryCta": "Shop Collection",
+    "secondaryCta": "See Terms",
+    "stats": {
+      "products": "Products",
+      "discount": "Discount",
+      "endsIn": "Ends In"
+    }
+  }
+}

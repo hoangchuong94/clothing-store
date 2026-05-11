@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "badge": "Sản phẩm",
+    "heading": "Mua sắm bộ sưu tập mới nhất",
+    "description": "Duyệt kho hàng với bộ lọc kiểu an toàn, trạng thái URL đồng bộ và dữ liệu sản phẩm chạy trên server."
+  },
+  "filters": {
+    "title": "Bộ lọc",
+    "heading": "Tinh chỉnh tìm kiếm",
+    "subtitle": "Lọc sản phẩm, sắp xếp nhanh và xem trước kết quả mà không cần tải lại.",
+    "category": "Danh mục",
+    "badge": "Nhãn",
+    "gender": "Giới tính",
+    "sort": "Sắp xếp",
+    "price": "Khoảng giá",
+    "placeholder": {
+      "category": "Tất cả danh mục",
+      "badge": "Bất kỳ nhãn nào",
+      "gender": "Tất cả giới tính",
+      "sort": "Mặc định"
+    },
+    "clear": "Xóa bộ lọc",
+    "activeCount": "{count} đang hoạt động",
+    "sortOptions": {
+      "priceAsc": "Giá: Từ thấp đến cao",
+      "priceDesc": "Giá: Từ cao xuống thấp",
+      "ratingDesc": "Đánh giá cao"
+    },
+    "genderOptions": {
+      "men": "Nam",
+      "women": "Nữ",
+      "unisex": "Unisex"
+    },
+    "mobile": {
+      "button": "Bộ lọc",
+      "title": "Lọc sản phẩm",
+      "description": "Cập nhật bộ lọc và sắp xếp với xem trước tức thì."
+    }
+  }
+}
