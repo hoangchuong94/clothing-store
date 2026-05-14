@@ -12,20 +12,19 @@ export async function registerUser(
   credentials: RegisterSchema,
 ): Promise<AuthResponse<{ redirectUrl: string }>> {
   try {
-    if (
-      !credentials.name ||
-      !credentials.email ||
-      !credentials.password ||
-      !credentials.passwordConfirm
-    ) {
+    const validatedFields = RegisterSchema.safeParse(credentials);
+
+    if (!validatedFields.success) {
       return {
         success: false,
         error: AuthErrorHandler.createError(AUTH_ERROR_CODES.INVALID_FIELDS),
       };
     }
 
+    const { name, email, password } = validatedFields.data;
+
     const existingUser = await prisma.user.findUnique({
-      where: { email: credentials.email },
+      where: { email },
     });
 
     if (existingUser) {
@@ -35,12 +34,12 @@ export async function registerUser(
       };
     }
 
-    const hashedPassword = await bcrypt.hash(credentials.password, 12);
+    const hashedPassword = await bcrypt.hash(password, 12);
 
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
-        name: credentials.name,
-        email: credentials.email,
+        name: name,
+        email: email,
         password: hashedPassword,
         role: {
           connect: {
@@ -50,13 +49,6 @@ export async function registerUser(
       },
     });
 
-    if (!user) {
-      return {
-        success: false,
-        error: AuthErrorHandler.createError(AUTH_ERROR_CODES.DATABASE_ERROR),
-      };
-    }
-
     return {
       success: true,
       data: {
@@ -65,6 +57,24 @@ export async function registerUser(
     };
   } catch (error) {
     console.error('Registration error:', error);
+
+    if (error instanceof Error) {
+      const prismaError = error as {
+        code?: string;
+        meta?: { target?: unknown };
+      };
+
+      if (
+        prismaError.code === 'P2002' &&
+        prismaError.meta?.target &&
+        JSON.stringify(prismaError.meta.target).includes('email')
+      ) {
+        return {
+          success: false,
+          error: AuthErrorHandler.createError(AUTH_ERROR_CODES.EMAIL_ALREADY_EXISTS),
+        };
+      }
+    }
 
     const authError =
       error instanceof Error

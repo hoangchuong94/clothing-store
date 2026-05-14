@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import type { PasswordStrengthResult } from '../hooks/usePasswordStrength';
+import type { PasswordStrengthResult } from '../hooks';
 
 interface PasswordStrengthProps {
   strength: PasswordStrengthResult;

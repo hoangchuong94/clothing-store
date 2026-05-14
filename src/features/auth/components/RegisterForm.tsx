@@ -11,8 +11,7 @@ import { PasswordStrength } from './PasswordStrength';
 import { SocialButtons } from './SocialButtons';
 import { AuthErrorAlert } from './AuthError';
 import { AuthSuccessAlert } from './AuthSuccess';
-import { useRegister } from '../hooks/useRegister';
-import { usePasswordStrength } from '../hooks/usePasswordStrength';
+import { useRegister, usePasswordStrength } from '../hooks';
 
 /**
  * Pure presentation component for user registration
