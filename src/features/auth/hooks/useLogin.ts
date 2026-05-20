@@ -15,6 +15,7 @@ import { LoginSchema, type LoginSchema as LoginSchemaType } from '../schemas/aut
 import type { UseLoginReturn } from '../types/auth.types';
 import { AUTH_ERROR_CODES } from '../types/auth.types';
 import { AuthErrorHandler } from '../lib/auth-errors';
+import { useRouter } from '@/i18n/navigation';
 import { useSocialAuth, useAuthError, useAuthRedirect, useCredentialsAuth } from './index';
 import { loginWithCredentials } from '../actions/login';
 import { validateCallbackUrl } from '../lib/callback-url';
@@ -36,6 +37,7 @@ export function useLogin(): UseLoginReturn {
 
   // Use shared hooks
   const { error, setError, clearError, getErrorMessage } = useAuthError();
+  const router = useRouter();
   const { redirectAfterAuth } = useAuthRedirect();
   const { authenticate } = useCredentialsAuth();
 
@@ -66,6 +68,16 @@ export function useLogin(): UseLoginReturn {
         const result = await loginWithCredentials(values);
 
         if (!result.success) {
+          if (
+            result.error &&
+            AuthErrorHandler.isError(result.error, AUTH_ERROR_CODES.EMAIL_NOT_VERIFIED)
+          ) {
+            const verifyUrl = result.data?.redirectUrl;
+            if (verifyUrl) {
+              router.push(verifyUrl);
+              return;
+            }
+          }
           setError(result.error || AuthErrorHandler.createError(AUTH_ERROR_CODES.UNKNOWN_ERROR));
           return;
         }
@@ -94,7 +106,7 @@ export function useLogin(): UseLoginReturn {
         );
       }
     },
-    [callbackUrl, clearError, authenticate, redirectAfterAuth, setError],
+    [callbackUrl, clearError, authenticate, redirectAfterAuth, router, setError],
   );
 
   const onSubmit = useCallback(

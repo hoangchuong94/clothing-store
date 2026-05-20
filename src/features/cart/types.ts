@@ -3,8 +3,6 @@
  * Domain-specific cart types are centralized in the cart feature.
  */
 
-import { Product } from '../products/types';
-
 export interface CartItemVariant {
   id: string;
   name: string;
@@ -26,11 +24,6 @@ export interface CartItem {
 export interface Cart {
   items: CartItem[];
   lastUpdated?: number;
-}
-
-export interface UserSession {
-  userId?: string;
-  isAuthenticated: boolean;
 }
 
 export interface CartActionResponse<T = unknown> {

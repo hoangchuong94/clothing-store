@@ -16,6 +16,8 @@ export const AUTH_ERROR_CODES = {
   EMAIL_NOT_FOUND: 'error.emailNotFound',
   EMAIL_ALREADY_EXISTS: 'error.emailAlreadyExists',
   EMAIL_NOT_VERIFIED: 'error.emailNotVerified',
+  VERIFICATION_RESEND_COOLDOWN: 'error.verificationResendCooldown',
+  VERIFICATION_RESEND_LIMIT: 'error.verificationResendLimit',
   ACCOUNT_NOT_LINKED: 'error.accountNotLinked',
   OAUTH_ERROR: 'error.oauthError',
   INVALID_FIELDS: 'error.invalidFields',
@@ -78,6 +80,7 @@ export interface SessionUser {
   image?: string;
   role: UserRole;
   scopes: string[];
+  isEmailVerified: boolean;
 }
 
 /**
@@ -166,3 +169,6 @@ export interface CallbackUrlConfig {
 export type RoleCode = 'SUPER_ADMIN' | 'ADMIN' | 'STAFF' | 'SELLER' | 'CUSTOMER';
 
 export type Scope = 'admin' | 'staff' | 'seller' | 'account' | 'cart';
+
+export type { UserSession } from './user-session';
+export type { CurrentUser } from './current-user';

@@ -1,62 +1,43 @@
-import nodemailer from 'nodemailer';
+/**
+ * @deprecated Use `@/lib/email/send` for new code.
+ */
+import {
+  buildVerificationUrl,
+  sendVerificationEmail as sendVerificationEmailFromService,
+} from '@/lib/email/send';
+import type { EmailLocale } from '@/lib/email/types';
+import { verificationConfig } from './verification/config';
 
 interface SendEmailProps {
   email: string;
   token: string;
+  locale?: EmailLocale;
 }
 
-export const sendVerificationEmail = async ({ email, token }: SendEmailProps) => {
-  const confirmLink = `<a href="${process.env.URL}/new-verification?token=${token}">Click here to verify your email</a>`;
+export async function sendVerificationEmail({ email, token, locale = 'en' }: SendEmailProps) {
   try {
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      service: 'gmail',
-      secure: true,
-      auth: {
-        user: process.env.SMTP_ACCOUNT,
-        pass: process.env.SMTP_PASSWORD,
-      },
-      debug: true,
-      logger: true,
-    });
-    await transporter.verify();
-    await transporter.sendMail({
-      from: process.env.SMTP_ACCOUNT,
-      subject: 'verification email',
+    await sendVerificationEmailFromService({
       to: email,
-      html: confirmLink,
+      name: null,
+      verificationUrl: buildVerificationUrl(locale, token),
+      locale,
+      expiresInHours: verificationConfig.tokenExpiryHours,
     });
   } catch (error) {
-    console.log('Error sending email:', error);
+    console.error('Error sending verification email:', error);
     return { error: 'Sending authentication email failed' };
   }
-};
+}
 
+/** @deprecated Password reset — implement with dedicated token model */
 export const sendVerificationForgotPassword = async (email: string, token: string) => {
-  const confirmLink = `<a href="${process.env.URL}/forgot-password?token=${token}">Click here to reset your password</a>`;
-  try {
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      service: 'gmail',
-      secure: true,
-      auth: {
-        user: process.env.SMTP_ACCOUNT,
-        pass: process.env.SMTP_PASSWORD,
-      },
-      debug: true,
-      logger: true,
-    });
-    await transporter.verify();
-    await transporter.sendMail({
-      from: process.env.SMTP_ACCOUNT,
-      subject: 'verification email',
-      to: email,
-      html: confirmLink,
-    });
-  } catch (error) {
-    console.log('Error sending email:', error);
-    return { error: 'Sending authentication email failed' };
-  }
+  const base =
+    process.env.NEXT_PUBLIC_BASE_URL ??
+    process.env.NEXT_PUBLIC_APP_URL ??
+    'http://localhost:3000';
+  console.warn('sendVerificationForgotPassword is not yet migrated to the email service', {
+    email,
+    token,
+    base,
+  });
 };

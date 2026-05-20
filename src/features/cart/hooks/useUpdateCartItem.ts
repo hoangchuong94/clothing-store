@@ -13,7 +13,7 @@ import {
   updateCartItemSuccess,
   updateCartItemError,
 } from '@/features/cart/lib/redux/cartSlice';
-import { updateCartItem as updateCartItemAction } from '@/lib/server/actions/cart';
+import { updateCartItem as updateCartItemAction } from '@/features/cart/server/actions';
 
 interface UseUpdateCartItemOptions {
   debounceMs?: number;

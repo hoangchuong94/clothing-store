@@ -5,3 +5,4 @@ export { useAuthRedirect } from './useAuthRedirect';
 export { useCredentialsAuth } from './useCredentialsAuth';
 export { useSocialAuth } from './useSocialAuth';
 export { usePasswordStrength, type PasswordStrengthResult } from './usePasswordStrength';
+export { useAuthUser, type AuthUser, type UseAuthUserReturn } from './useAuthUser';

@@ -1,16 +1,20 @@
 'use server';
 
 import bcrypt from 'bcryptjs';
+import { getLocale } from 'next-intl/server';
+
 import { RegisterSchema } from '../schemas/auth-schemas';
 import type { AuthResponse } from '../types/auth.types';
 import { AuthErrorHandler } from '../lib/auth-errors';
 import { AUTH_ERROR_CODES } from '../types/auth.types';
 import prisma from '@/lib/server/prisma/prisma';
-import { getRedirectUrlForRole } from '../lib/callback-url';
+import { APP_ROUTES } from '../config/app-routes';
+import { createAndSendVerification } from '../lib/verification/service';
+import type { EmailLocale } from '@/lib/email/types';
 
 export async function registerUser(
   credentials: RegisterSchema,
-): Promise<AuthResponse<{ redirectUrl: string }>> {
+): Promise<AuthResponse<{ redirectUrl: string; email: string }>> {
   try {
     const validatedFields = RegisterSchema.safeParse(credentials);
 
@@ -22,6 +26,7 @@ export async function registerUser(
     }
 
     const { name, email, password } = validatedFields.data;
+    const locale = (await getLocale()) as EmailLocale;
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -36,10 +41,10 @@ export async function registerUser(
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
-        name: name,
-        email: email,
+        name,
+        email,
         password: hashedPassword,
         role: {
           connect: {
@@ -49,10 +54,20 @@ export async function registerUser(
       },
     });
 
+    try {
+      await createAndSendVerification(user.id, locale, { skipRateLimit: true });
+    } catch (emailError) {
+      // Account is created; user can resend from the verify-email page
+      console.error('Verification email failed (registration continues):', emailError);
+    }
+
+    const verifyUrl = `${APP_ROUTES.AUTH.VERIFY_EMAIL}?email=${encodeURIComponent(email)}`;
+
     return {
       success: true,
       data: {
-        redirectUrl: getRedirectUrlForRole('CUSTOMER'),
+        redirectUrl: verifyUrl,
+        email,
       },
     };
   } catch (error) {

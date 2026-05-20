@@ -20,16 +20,16 @@ import {
   RemoveCartItemSchema,
   ClearCartSchema,
   MergeCartSchema,
-} from '../cart/schemas';
+} from './schemas';
 import {
   mergeCartsLogic,
   generateCartItemId,
   findCartItemByProduct,
   findCartItem,
   createEmptyCart,
-} from '../cart/utils';
-import { getProduct, getUserCart, saveUserCart, deleteUserCart, checkStock } from '../cart/db';
-import { getCurrentUserSession } from './auth'; // We'll create a stub for this
+} from './utils';
+import { getProduct, getUserCart, saveUserCart, deleteUserCart, checkStock } from './db';
+import { getCurrentUserSession } from '@/lib/server/actions/auth';
 
 /**
  * Add product to cart

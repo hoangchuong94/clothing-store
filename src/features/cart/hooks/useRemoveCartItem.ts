@@ -13,7 +13,7 @@ import {
   removeCartItemSuccess,
   removeCartItemError,
 } from '@/features/cart/lib/redux/cartSlice';
-import { removeCartItem as removeCartItemAction } from '@/lib/server/actions/cart';
+import { removeCartItem as removeCartItemAction } from '@/features/cart/server/actions';
 
 interface UseRemoveCartItemOptions {
   onSuccess?: (cartItemId: string) => void;

@@ -2,5 +2,5 @@
  * Server Actions - Public API
  */
 
-export * from './cart';
 export * from './auth';
+export * from '@/features/cart/server/actions';

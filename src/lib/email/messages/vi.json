@@ -1,0 +1,11 @@
+{
+  "verification": {
+    "subject": "Xác thực địa chỉ email của bạn",
+    "preview": "Xác nhận email để kích hoạt tài khoản",
+    "greeting": "Xin chào",
+    "body": "Cảm ơn bạn đã đăng ký. Vui lòng xác thực địa chỉ email bằng cách nhấn nút bên dưới. Liên kết hết hạn sau {hours} giờ và chỉ sử dụng được một lần.",
+    "button": "Xác thực email",
+    "fallback": "Nếu nút không hoạt động, hãy sao chép và dán liên kết sau vào trình duyệt:",
+    "ignore": "Nếu bạn không tạo tài khoản, hãy bỏ qua email này."
+  }
+}

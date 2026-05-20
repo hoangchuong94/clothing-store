@@ -7,6 +7,8 @@ import { AuthErrorHandler } from '../lib/auth-errors';
 import { AUTH_ERROR_CODES } from '../types/auth.types';
 import { getRedirectUrlForRole } from '../lib/callback-url';
 import prisma from '@/lib/server/prisma/prisma';
+import { isEmailVerified } from '../lib/verification/status';
+import { APP_ROUTES } from '../config/app-routes';
 
 export async function loginWithCredentials(
   credentials: LoginSchema,
@@ -45,7 +47,16 @@ export async function loginWithCredentials(
       };
     }
 
-    // Success - return redirect URL based on role
+    if (!isEmailVerified(user.emailVerified)) {
+      return {
+        success: false,
+        error: AuthErrorHandler.createError(AUTH_ERROR_CODES.EMAIL_NOT_VERIFIED),
+        data: {
+          redirectUrl: `${APP_ROUTES.AUTH.VERIFY_EMAIL}?email=${encodeURIComponent(user.email ?? credentials.email)}`,
+        },
+      };
+    }
+
     return {
       success: true,
       data: {

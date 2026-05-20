@@ -14,7 +14,8 @@ import { RegisterSchema, type RegisterSchema as RegisterSchemaType } from '../sc
 import type { UseRegisterReturn } from '../types/auth.types';
 import { AUTH_ERROR_CODES } from '../types/auth.types';
 import { AuthErrorHandler } from '../lib/auth-errors';
-import { useSocialAuth, useAuthError, useAuthRedirect, useCredentialsAuth } from './index';
+import { useSocialAuth, useAuthError } from './index';
+import { useRouter } from '@/i18n/navigation';
 import { registerUser } from '../actions/register';
 import { AuthLogger } from '../lib/auth-logger';
 
@@ -30,8 +31,7 @@ export function useRegister(): UseRegisterReturn {
 
   // Use shared hooks
   const { error, setError, clearError, getErrorMessage } = useAuthError();
-  const { redirectAfterAuth } = useAuthRedirect();
-  const { authenticate } = useCredentialsAuth();
+  const router = useRouter();
 
   /**
    * Initialize form with validation
@@ -65,20 +65,10 @@ export function useRegister(): UseRegisterReturn {
           return;
         }
 
-        // Registration successful, attempt automatic sign in
-        const authResult = await authenticate(values.email, values.password);
-
-        if (!authResult.success) {
-          setError(authResult.error || null);
-          return;
-        }
-
-        // Mark as successful before redirect
         setSuccess(true);
 
-        // Redirect after successful registration and sign in
-        const redirectUrl = result.data?.redirectUrl || '/';
-        redirectAfterAuth(redirectUrl);
+        const redirectUrl = result.data?.redirectUrl ?? '/verify-email';
+        router.push(redirectUrl);
       } catch (err) {
         AuthLogger.error('Registration error', err, { email: values.email });
         setError(
@@ -89,7 +79,7 @@ export function useRegister(): UseRegisterReturn {
         );
       }
     },
-    [clearError, authenticate, redirectAfterAuth, setError],
+    [clearError, router, setError],
   );
 
   const onSubmit = useCallback(

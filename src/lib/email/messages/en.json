@@ -1,0 +1,11 @@
+{
+  "verification": {
+    "subject": "Verify your email address",
+    "preview": "Confirm your email to activate your account",
+    "greeting": "Hello",
+    "body": "Thanks for signing up. Please verify your email address by clicking the button below. This link expires in {hours} hours and can only be used once.",
+    "button": "Verify email",
+    "fallback": "If the button does not work, copy and paste this link into your browser:",
+    "ignore": "If you did not create an account, you can safely ignore this email."
+  }
+}

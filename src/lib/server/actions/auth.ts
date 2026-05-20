@@ -1,41 +1,24 @@
 /**
- * Authentication helper for cart operations
- * In production: would verify JWT tokens, check session cookies, etc.
- *
- * For this demo: returns mock user session based on headers/cookies
+ * Server auth helpers for cross-cutting consumers (e.g. cart server actions).
+ * Delegates to the auth feature adapter — do not call `auth()` directly here.
  */
 
-import { UserSession } from '@/features/cart/types';
+import { getCurrentUser, mapCurrentUserToSession } from '@/features/auth/server/session';
+import type { UserSession } from '@/features/auth/types/user-session';
+
+export { getCurrentUser } from '@/features/auth/server/session';
 
 /**
- * Get current user session
- * In production: verify authentication tokens, check database, etc.
- *
- * Stub implementation:
- * - Reads user ID from request headers (x-user-id)
- * - Or defaults to guest user (no userId)
+ * Legacy session shape for cart and other server actions.
+ * @deprecated Prefer `getCurrentUser()` for new server code.
  */
 export async function getCurrentUserSession(): Promise<UserSession> {
   try {
-    // In a real app with authentication:
-    // const session = await auth(); // From next-auth, clerk, etc.
-    // return {
-    //   userId: session?.user?.id,
-    //   isAuthenticated: !!session?.user?.id,
-    // };
-
-    // For now, stub implementation - always returns guest
-    // In production, integrate with your auth provider
-    return {
-      isAuthenticated: false,
-      userId: undefined,
-    };
+    const user = await getCurrentUser();
+    return mapCurrentUserToSession(user);
   } catch (error) {
     console.error('Error getting user session:', error);
-    return {
-      isAuthenticated: false,
-      userId: undefined,
-    };
+    return mapCurrentUserToSession(null);
   }
 }
 
@@ -43,8 +26,8 @@ export async function getCurrentUserSession(): Promise<UserSession> {
  * Check if user is authenticated
  */
 export async function isAuthenticated(): Promise<boolean> {
-  const session = await getCurrentUserSession();
-  return session.isAuthenticated;
+  const user = await getCurrentUser();
+  return user !== null;
 }
 
 /**
@@ -52,6 +35,6 @@ export async function isAuthenticated(): Promise<boolean> {
  * Returns undefined if user is not authenticated
  */
 export async function getCurrentUserId(): Promise<string | undefined> {
-  const session = await getCurrentUserSession();
-  return session.userId;
+  const user = await getCurrentUser();
+  return user?.userId;
 }

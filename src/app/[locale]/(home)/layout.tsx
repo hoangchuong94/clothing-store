@@ -1,21 +1,23 @@
 'use client';
 
 import { Footer } from '@/components/layout/footer';
-import { Header, HeaderProvider, useHeader } from '@/components/layout/header';
+import { Header } from '@/components/layout/header';
+import { useAuthUser } from '@/features/auth/hooks/useAuthUser';
 
-function HeaderWithState() {
-  const { cart, auth, logout } = useHeader();
+function HeaderWithAuth() {
+  const { isAuthenticated, isLoading, logout } = useAuthUser();
 
-  return <Header isLoggedIn={auth.isLoggedIn} onLogout={logout} />;
+  // While session is loading, show guest UI (login icon) — avoids flash/crash.
+  const isLoggedIn = isAuthenticated && !isLoading;
+
+  return <Header isLoggedIn={isLoggedIn} onLogout={logout} />;
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <HeaderProvider>
-        <HeaderWithState />
-        <main>{children}</main>
-      </HeaderProvider>
+      <HeaderWithAuth />
+      <main>{children}</main>
       <Footer />
     </>
   );

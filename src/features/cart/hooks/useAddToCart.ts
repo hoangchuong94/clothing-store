@@ -14,7 +14,7 @@ import {
   addToCartSuccess,
   addToCartError,
 } from '@/features/cart/lib/redux/cartSlice';
-import { addToCart as addToCartAction } from '@/lib/server/actions/cart';
+import { addToCart as addToCartAction } from '@/features/cart/server/actions';
 import { CartItem, AddToCartPayload } from '@/features/cart/types';
 
 interface UseAddToCartOptions {

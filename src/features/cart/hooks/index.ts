@@ -4,11 +4,12 @@
 
 export { useCart } from './useCart';
 export { useAddToCart } from './useAddToCart';
-export { useUpdateCartItem } from '@/features/cart/hooks/useUpdateCartItem';
-export { useRemoveCartItem } from '@/features/cart/hooks/useRemoveCartItem';
-export { useCartDrawer } from '@/features/cart/hooks/useCartDrawer';
+export { useUpdateCartItem } from './useUpdateCartItem';
+export { useRemoveCartItem } from './useRemoveCartItem';
+export { useCartDrawer } from './useCartDrawer';
 export {
   useCartPersistence,
   useCartInitialization,
   useCartSync,
-} from '@/features/cart/hooks/useCartPersistence';
+} from './useCartPersistence';
+export { useCartAuthSync } from './useCartAuthSync';

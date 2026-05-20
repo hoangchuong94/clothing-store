@@ -90,9 +90,13 @@ export function Header({ isLoggedIn = false, onLogout }: HeaderProps) {
 
           {/* User Menu */}
           <div className="hidden sm:block">
-            <Link href="/signin">
-              <UserMenu isLoggedIn={isLoggedIn} onLogout={onLogout} />
-            </Link>
+            {isLoggedIn ? (
+              <UserMenu isLoggedIn onLogout={onLogout} />
+            ) : (
+              <Link href="/signin">
+                <UserMenu isLoggedIn={false} />
+              </Link>
+            )}
           </div>
 
           {/* Language Switcher */}

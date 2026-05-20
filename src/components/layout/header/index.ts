@@ -1,5 +1,4 @@
 export { Header } from './Header';
-export { HeaderProvider, useHeader } from './HeaderContext';
 export { NavMenu } from './NavMenu';
 export { MobileMenu } from './MobileMenu';
 export { UserMenu } from './UserMenu';
