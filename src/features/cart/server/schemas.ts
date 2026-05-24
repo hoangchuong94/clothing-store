@@ -17,20 +17,28 @@ export const CartItemVariantSchema = z.object({
 /**
  * Add to cart validation
  * Ensures all required fields are present and valid
+ *
+ * Security: Server derives price, name, image from product data.
+ * Client-provided values are ignored for security (price manipulation prevention).
+ * Fields kept optional for backward compatibility.
  */
 export const AddToCartSchema = z.object({
   productId: z.string().min(1, 'Product ID is required'),
-  name: z.string().min(1, 'Product name is required').max(255),
+  // @deprecated Server derives from product data - client value ignored
+  name: z.string().min(1, 'Product name is required').max(255).optional(),
+  // @deprecated Server derives from product data - client value ignored
   priceSnapshot: z
     .number()
     .positive('Price must be positive')
-    .finite('Price must be a finite number'),
+    .finite('Price must be a finite number')
+    .optional(),
   quantity: z
     .number()
     .int('Quantity must be an integer')
     .positive('Quantity must be at least 1')
     .max(999, 'Quantity cannot exceed 999'),
-  image: z.string().url('Image must be a valid URL'),
+  // @deprecated Server derives from product data - client value ignored
+  image: z.string().url('Image must be a valid URL').optional(),
   stock: z.number().int('Stock must be an integer').nonnegative('Stock cannot be negative'),
   variants: CartItemVariantSchema.array().optional(),
   variantId: z.string().optional(),

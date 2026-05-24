@@ -260,6 +260,10 @@ export const cartSlice = createSlice({
     syncCart: (state, action: PayloadAction<CartItem[]>) => {
       state.items = action.payload;
       state.lastUpdated = Date.now();
+      state.status = 'idle';
+      state.error = null;
+      state.previousState = null;
+      state.isOptimisticUpdate = false;
     },
   },
 });

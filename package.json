@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --check .",
     "test": "echo 'No tests specified yet'",
     "prisma:seed": "prisma db seed",
     "seed": "prisma db seed"

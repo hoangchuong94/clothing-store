@@ -19,13 +19,13 @@ export function generateCartItemId(): string {
  * - If product exists in both: sum quantities (respect stock)
  * - If product only in guest: add to user cart
  * - If product only in user: keep as is
- * - Use newer priceSnapshot if quantities are different
+ * - Re-resolve price, name, image from server product data (security)
  */
-export function mergeCartsLogic(userCart: CartItem[], guestCart: CartItem[]): CartItem[] {
-  // Create maps for easier lookup
-  const userCartMap = new Map<string, CartItem>(userCart.map((item) => [item.id, item]));
-  const guestCartMap = new Map<string, CartItem>(guestCart.map((item) => [item.id, item]));
-
+export function mergeCartsLogic(
+  userCart: CartItem[],
+  guestCart: CartItem[],
+  products: Map<string, { name: string; price: number; image: string }>,
+): CartItem[] {
   // Create a set of all product+variant combinations
   const processedKeys = new Set<string>();
   const mergedItems: CartItem[] = [];
@@ -40,6 +40,14 @@ export function mergeCartsLogic(userCart: CartItem[], guestCart: CartItem[]): Ca
     const key = getKey(guestItem);
     const userItem = userCart.find((item) => getKey(item) === key);
 
+    // Get server product data for security
+    const productData = products.get(guestItem.productId);
+
+    if (!productData) {
+      // Skip items with invalid products
+      continue;
+    }
+
     if (userItem) {
       // Merge quantities: sum them up but respect stock
       const mergedQuantity = Math.min(userItem.quantity + guestItem.quantity, userItem.stock);
@@ -47,14 +55,20 @@ export function mergeCartsLogic(userCart: CartItem[], guestCart: CartItem[]): Ca
       mergedItems.push({
         ...userItem,
         quantity: mergedQuantity,
-        // Use the most recent price snapshot (assume guest item is more recent)
-        priceSnapshot: guestItem.priceSnapshot,
+        // Re-resolve from server product data (security: ignore client values)
+        name: productData.name,
+        priceSnapshot: productData.price,
+        image: productData.image,
       });
     } else {
-      // Guest item not in user cart, add it
+      // Guest item not in user cart, add it with server data
       mergedItems.push({
         ...guestItem,
         id: generateCartItemId(), // Generate new ID for consistency
+        // Re-resolve from server product data (security: ignore client values)
+        name: productData.name,
+        priceSnapshot: productData.price,
+        image: productData.image,
       });
     }
 
@@ -65,7 +79,19 @@ export function mergeCartsLogic(userCart: CartItem[], guestCart: CartItem[]): Ca
   for (const userItem of userCart) {
     const key = getKey(userItem);
     if (!processedKeys.has(key)) {
-      mergedItems.push(userItem);
+      // Also re-resolve user cart items from server data
+      const productData = products.get(userItem.productId);
+      if (productData) {
+        mergedItems.push({
+          ...userItem,
+          name: productData.name,
+          priceSnapshot: productData.price,
+          image: productData.image,
+        });
+      } else {
+        // Keep item even if product not found (backward compatibility)
+        mergedItems.push(userItem);
+      }
     }
   }
 

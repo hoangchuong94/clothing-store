@@ -29,8 +29,8 @@ export function checkResendRateLimit(
     }
   }
 
-  let count = state.verificationResendCount;
-  let windowStart = state.verificationResendWindowStart;
+  const count = state.verificationResendCount;
+  const windowStart = state.verificationResendWindowStart;
 
   if (!windowStart || now.getTime() - windowStart.getTime() >= HOUR_MS) {
     return { allowed: true };

@@ -28,7 +28,14 @@ import {
   findCartItem,
   createEmptyCart,
 } from './utils';
-import { getProduct, getUserCart, saveUserCart, deleteUserCart, checkStock } from './db';
+import {
+  getProduct,
+  getProducts,
+  getUserCart,
+  saveUserCart,
+  deleteUserCart,
+  checkStock,
+} from './db';
 import { getCurrentUserSession } from '@/lib/server/actions/auth';
 
 /**
@@ -70,14 +77,14 @@ export async function addToCart(input: unknown): Promise<CartActionResponse<Cart
     // Get current user session (for determining cart storage)
     const session = await getCurrentUserSession();
 
-    // Create cart item
+    // Create cart item with server-derived product data (security: ignore client values)
     const cartItem: CartItem = {
       id: generateCartItemId(),
       productId: validatedInput.productId,
-      name: validatedInput.name,
-      priceSnapshot: validatedInput.priceSnapshot,
+      name: product.name,
+      priceSnapshot: product.price,
       quantity: validatedInput.quantity,
-      image: validatedInput.image,
+      image: product.image,
       stock: validatedInput.stock,
       variants: validatedInput.variants,
       variantId: validatedInput.variantId,
@@ -325,6 +332,7 @@ export async function clearCart(input: unknown): Promise<CartActionResponse<bool
 /**
  * Merge guest cart with server cart
  * Called when user logs in after browsing as guest
+ * Re-resolves all prices from server product data for security
  */
 export async function mergeCart(input: unknown): Promise<CartActionResponse<Cart>> {
   try {
@@ -345,8 +353,21 @@ export async function mergeCart(input: unknown): Promise<CartActionResponse<Cart
     // Get existing user cart
     let userCart = (await getUserCart(session.userId)) || createEmptyCart();
 
-    // Merge carts using merge logic
-    const mergedItems = mergeCartsLogic(userCart.items, validatedInput.guestCart);
+    // Collect all unique product IDs from both carts
+    const productIds = new Set<string>();
+    userCart.items.forEach((item) => productIds.add(item.productId));
+    validatedInput.guestCart.forEach((item) => productIds.add(item.productId));
+
+    // Fetch all products from server
+    const products = await getProducts(Array.from(productIds));
+
+    // Create product map for quick lookup
+    const productMap = new Map<string, { name: string; price: number; image: string }>(
+      products.map((p) => [p.id, { name: p.name, price: p.price, image: p.image }]),
+    );
+
+    // Merge carts using merge logic with server product data
+    const mergedItems = mergeCartsLogic(userCart.items, validatedInput.guestCart, productMap);
 
     userCart = {
       items: mergedItems,
