@@ -1,5 +1,4 @@
-import { Category, Product, Testimonial } from '../types';
-import { PRODUCTS } from '../server/data';
+import { Category, Testimonial } from '../types';
 
 export const categories: Category[] = [
   {
@@ -32,21 +31,9 @@ export const categories: Category[] = [
   },
 ];
 
-const productById = (id: string) => PRODUCTS.find((product) => product.id === id);
-
-export const featuredProducts: Product[] = [
-  productById('prod-006'),
-  productById('prod-007'),
-  productById('prod-008'),
-  productById('prod-009'),
-].filter((product): product is Product => Boolean(product));
-
-export const newArrivals: Product[] = [
-  productById('prod-010'),
-  productById('prod-011'),
-  productById('prod-012'),
-  productById('prod-013'),
-].filter((product): product is Product => Boolean(product));
+// Feature product ids — used by server to resolve repository-backed products.
+export const FEATURED_PRODUCT_IDS = ['prod-006', 'prod-007', 'prod-008', 'prod-009'];
+export const NEW_ARRIVALS_PRODUCT_IDS = ['prod-010', 'prod-011', 'prod-012', 'prod-013'];
 
 export const testimonials: Testimonial[] = [
   {

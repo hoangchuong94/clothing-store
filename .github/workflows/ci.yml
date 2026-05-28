@@ -9,7 +9,7 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,13 +26,19 @@ jobs:
           version: 9
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm generate
 
       - name: Lint
         run: pnpm lint
 
       - name: Type check
         run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
 
       - name: Build
         run: pnpm build

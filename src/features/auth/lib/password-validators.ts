@@ -199,8 +199,9 @@ export function validatePasswordDifferent(newPassword: string, previousPassword:
  * const breachedHashes = response.text();
  * // Check nếu rest of hash nằm trong breachedHashes
  */
-export async function validatePasswordNotBreached(password: string): Promise<boolean> {
+export async function validatePasswordNotBreached(_password: string): Promise<boolean> {
   try {
+    void _password;
     // Placeholder - implement thực tế với HaveIBeenPwned API
     // Ví dụ:
     // const hash = await sha1(password).toUpperCase();

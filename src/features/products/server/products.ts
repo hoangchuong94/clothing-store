@@ -1,8 +1,7 @@
 import { Product, AvailableProductFilters } from '../types';
-import { getAllProducts } from './data';
 import { parseProductFilters, ProductFilters } from './schemas';
-
-export { getAllProducts } from './data';
+import { getAllProducts } from './data';
+import { FEATURED_PRODUCT_IDS, NEW_ARRIVALS_PRODUCT_IDS } from '@/features/products/data/ui';
 
 export async function getProducts(searchParams?: Record<string, string | string[] | undefined>) {
   const filters = parseProductFilters(searchParams ?? {});
@@ -67,4 +66,16 @@ export function extractAvailableFilters(products: Product[]): AvailableProductFi
       max: prices.length ? Math.ceil(Math.max(...prices)) : 0,
     },
   };
+}
+
+export async function getFeaturedProducts(): Promise<Product[]> {
+  const products = await getAllProducts();
+  const byId = new Map(products.map((p) => [p.id, p]));
+  return FEATURED_PRODUCT_IDS.map((id) => byId.get(id)).filter((p): p is Product => Boolean(p));
+}
+
+export async function getNewArrivalsProducts(): Promise<Product[]> {
+  const products = await getAllProducts();
+  const byId = new Map(products.map((p) => [p.id, p]));
+  return NEW_ARRIVALS_PRODUCT_IDS.map((id) => byId.get(id)).filter((p): p is Product => Boolean(p));
 }

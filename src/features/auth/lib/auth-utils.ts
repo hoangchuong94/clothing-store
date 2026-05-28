@@ -86,7 +86,6 @@ export function getPasswordStrengthDisplay(password: string) {
  */
 export function getPasswordRequirementChecklist(password: string) {
   const { requirementsMet } = calculatePasswordStrength(password);
-  const trimmed = password.trim();
 
   const requirements = [
     {

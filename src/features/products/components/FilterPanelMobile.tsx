@@ -9,7 +9,6 @@ import {
   SheetHeader,
   SheetTitle,
   SheetDescription,
-  SheetFooter,
 } from '@/components/ui/sheet';
 import { Card } from '@/components/ui/card';
 import { FilterPanelContent } from './FilterPanelContent';

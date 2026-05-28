@@ -3,11 +3,8 @@ import { FilterPanel } from '@/features/products/components/FilterPanel';
 import { ProductGrid } from '@/features/products/components/ProductGrid';
 import { ProductsHero } from '@/features/products/components/ProductsHero';
 import { AddToCartButton } from '@/features/cart/components/AddToCartButton';
-import {
-  getAllProducts,
-  getProducts,
-  extractAvailableFilters,
-} from '@/features/products/server/products';
+import { getProducts, extractAvailableFilters } from '@/features/products/server/products';
+import { getAllProducts } from '@/features/products/server/data';
 import { parseProductFilters } from '@/features/products/server/schemas';
 interface ProductsPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;

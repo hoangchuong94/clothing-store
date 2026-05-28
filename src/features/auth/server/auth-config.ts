@@ -134,7 +134,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (url.startsWith('/')) {
         return `${baseUrl}${url}`;
       }
-      return url;
+      try {
+        const target = new URL(url);
+        if (target.origin === baseUrl) {
+          return url;
+        }
+      } catch {
+        // Invalid URL should never be used for redirects.
+      }
+      return baseUrl;
     },
   },
   events: {

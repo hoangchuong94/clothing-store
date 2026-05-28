@@ -1,12 +1,16 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { featuredProducts } from '@/features/products/data/ui';
+import { Product } from '@/features/products/types';
 import { ProductCard } from '@/features/products/components/ProductCard';
 import { Flame } from '@/components/ui/icon';
 import { useTranslations } from 'next-intl';
 
-export function FeaturedProductsSection() {
+interface FeaturedProductsSectionProps {
+  products: Product[];
+}
+
+export function FeaturedProductsSection({ products }: FeaturedProductsSectionProps) {
   const t = useTranslations('home.featured');
 
   const containerVariants = {
@@ -75,7 +79,7 @@ export function FeaturedProductsSection() {
           viewport={{ once: true, margin: '-100px' }}
           className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
         >
-          {featuredProducts.map((product, index) => (
+          {products.map((product, index) => (
             <ProductCard key={product.id} product={product} index={index} />
           ))}
         </motion.div>

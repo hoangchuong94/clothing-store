@@ -77,6 +77,8 @@ export function getProviderFromEmail(
 ): SocialProvider | null {
   // This would typically query a database to find linked providers
   // For now, return null - implement based on your needs
+  void email;
+  void providers;
   return null;
 }
 

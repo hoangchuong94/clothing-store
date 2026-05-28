@@ -85,7 +85,8 @@ export async function addToCart(input: unknown): Promise<CartActionResponse<Cart
       priceSnapshot: product.price,
       quantity: validatedInput.quantity,
       image: product.image,
-      stock: validatedInput.stock,
+      // Server-authoritative stock snapshot (never trust client value).
+      stock: stockCheck.available,
       variants: validatedInput.variants,
       variantId: validatedInput.variantId,
     };
@@ -102,13 +103,21 @@ export async function addToCart(input: unknown): Promise<CartActionResponse<Cart
       );
 
       if (existingItem) {
-        // Update quantity of existing item
-        const newQuantity = Math.min(
-          existingItem.quantity + validatedInput.quantity,
-          validatedInput.stock,
-        );
+        const requestedTotalQuantity = existingItem.quantity + validatedInput.quantity;
+        const totalStockCheck = await checkStock(validatedInput.productId, requestedTotalQuantity);
 
-        existingItem.quantity = newQuantity;
+        if (!totalStockCheck.isAvailable) {
+          return {
+            success: false,
+            error: {
+              code: 'INSUFFICIENT_STOCK',
+              message: `Only ${totalStockCheck.available} items available`,
+            },
+          };
+        }
+
+        existingItem.quantity = requestedTotalQuantity;
+        existingItem.stock = totalStockCheck.available;
 
         const updatedCart: Cart = {
           items: userCart.items,
@@ -202,6 +211,7 @@ export async function updateCartItem(input: unknown): Promise<CartActionResponse
 
       // Update quantity
       cartItem.quantity = validatedInput.quantity;
+      cartItem.stock = stockCheck.available;
       await saveUserCart(session.userId, userCart);
 
       return { success: true, data: cartItem };

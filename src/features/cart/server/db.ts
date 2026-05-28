@@ -80,7 +80,7 @@ export async function deleteUserCart(userId: string): Promise<void> {
 /**
  * @deprecated Dev-only helper; no longer simulates failures against in-memory store.
  */
-export async function simulateRandomError(_probability: number = 0.01): Promise<void> {
+export async function simulateRandomError(): Promise<void> {
   return;
 }
 

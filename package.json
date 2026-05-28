@@ -9,9 +9,14 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "format": "prettier --check .",
-    "test": "echo 'No tests specified yet'",
+    "test": "vitest run",
+    "generate": "prisma generate",
+    "postinstall": "pnpm generate",
     "prisma:seed": "prisma db seed",
-    "seed": "prisma db seed"
+    "seed": "prisma db seed",
+    "audit:products": "tsx scripts/audit-products.ts",
+    "smoke:products": "tsx scripts/smoke-product-identity.ts PRISMA",
+    "smoke:products:static": "tsx scripts/smoke-product-identity.ts STATIC"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
@@ -60,6 +65,7 @@
     "prisma": "^7.8.0",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.7"
   }
 }

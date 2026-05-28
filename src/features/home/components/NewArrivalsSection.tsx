@@ -2,11 +2,14 @@
 
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { newArrivals } from '@/features/products/data/ui';
+import { Product } from '@/features/products/types';
 import { ProductCard } from '@/features/products/components/ProductCard';
 import { Zap } from '@/components/ui/icon';
+interface NewArrivalsSectionProps {
+  products: Product[];
+}
 
-export function NewArrivalsSection() {
+export function NewArrivalsSection({ products }: NewArrivalsSectionProps) {
   const t = useTranslations('home.newArrivals');
 
   return (
@@ -59,7 +62,7 @@ export function NewArrivalsSection() {
           transition={{ duration: 0.8 }}
           className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
         >
-          {newArrivals.map((product, index) => (
+          {products.map((product, index) => (
             <motion.div
               key={product.id}
               initial={{ opacity: 0, x: 20 }}

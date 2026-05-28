@@ -7,6 +7,7 @@
   PromotionBanner,
   TestimonialsSection,
 } from '@/features/home/components';
+import { getFeaturedProducts, getNewArrivalsProducts } from '@/features/products/server/products';
 
 export const metadata = {
   title: 'Cyber Brand - Premium Streetwear x Cyber Fashion',
@@ -30,13 +31,16 @@ export const metadata = {
   },
 };
 
-export default function LocalePage() {
+export default async function LocalePage() {
+  const featured = await getFeaturedProducts();
+  const newArrivals = await getNewArrivalsProducts();
+
   return (
     <>
       <HeroSection />
       <CategoriesSection />
-      <FeaturedProductsSection />
-      <NewArrivalsSection />
+      <FeaturedProductsSection products={featured} />
+      <NewArrivalsSection products={newArrivals} />
       <PromotionBanner />
       <TestimonialsSection />
       <NewsletterSection />
