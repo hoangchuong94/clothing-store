@@ -31,7 +31,7 @@ export function FilterPanelDesktop({
 }: FilterPanelDesktopProps) {
   return (
     <div className="hidden lg:block">
-      <Card className="border border-slate-200/70 bg-white/90 py-4 shadow-sm shadow-slate-900/10 dark:border-slate-700/80 dark:bg-slate-950/90 dark:shadow-slate-950/20">
+      <Card className="border-border bg-card border py-4 shadow-sm shadow-teal-500/10">
         <FilterPanelContent
           availableFilters={availableFilters}
           draftFilters={draftFilters}

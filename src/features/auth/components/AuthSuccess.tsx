@@ -40,15 +40,15 @@ export function AuthSuccessDisplay({ message, onDismiss, className = '' }: AuthS
       role="status"
       aria-live="polite"
       aria-atomic="true"
-      className={`rounded-lg border border-green-300 bg-green-50 p-4 dark:border-green-800/50 dark:bg-green-950/30 ${className}`}
+      className={`rounded-lg border border-teal-300 bg-teal-50 p-4 dark:border-teal-800/50 dark:bg-teal-950/30 ${className}`}
     >
       <div className="flex gap-3">
         <div className="shrink-0 pt-0.5">
-          <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" aria-hidden="true" />
+          <CheckCircle className="h-5 w-5 text-teal-600 dark:text-teal-400" aria-hidden="true" />
         </div>
 
         <div className="flex-1">
-          <p className="text-sm font-medium text-green-800 dark:text-green-200">{displayMessage}</p>
+          <p className="text-sm font-medium text-teal-800 dark:text-teal-200">{displayMessage}</p>
         </div>
 
         {onDismiss && (
@@ -58,7 +58,7 @@ export function AuthSuccessDisplay({ message, onDismiss, className = '' }: AuthS
             size="sm"
             onClick={onDismiss}
             aria-label={t('common.dismiss')}
-            className="shrink-0 text-green-600 hover:bg-green-100 dark:text-green-400 dark:hover:bg-green-900/20"
+            className="shrink-0 text-teal-600 hover:bg-teal-100 dark:text-teal-400 dark:hover:bg-teal-900/20"
           >
             <X className="h-4 w-4" />
           </Button>
@@ -82,7 +82,7 @@ export function AuthSuccessAlert({ message, onDismiss }: Omit<AuthSuccessProps, 
     <div
       role="status"
       aria-live="polite"
-      className="flex items-center justify-between gap-3 rounded-3xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-200"
+      className="flex items-center justify-between gap-3 rounded-3xl border border-teal-300 bg-teal-50 px-4 py-3 text-sm text-teal-700 dark:border-teal-800 dark:bg-teal-950/40 dark:text-teal-200"
     >
       <span>{displayMessage}</span>
       {onDismiss && (
@@ -90,7 +90,7 @@ export function AuthSuccessAlert({ message, onDismiss }: Omit<AuthSuccessProps, 
           type="button"
           onClick={onDismiss}
           aria-label={t('common.dismiss')}
-          className="text-emerald-600 hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-300"
+          className="text-teal-600 hover:text-teal-900 dark:text-teal-400 dark:hover:text-teal-300"
         >
           <X className="h-4 w-4" />
         </button>

@@ -43,7 +43,10 @@ export function FilterPanelMobile({
     <div className="lg:hidden">
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline" className="w-full justify-between">
+          <Button
+            variant="outline"
+            className="border-border bg-background w-full justify-between hover:bg-teal-500/10"
+          >
             <span>Filters</span>
             <Badge variant={activeFiltersCount ? 'secondary' : 'outline'}>
               {activeFiltersCount}
@@ -51,11 +54,12 @@ export function FilterPanelMobile({
           </Button>
         </SheetTrigger>
         <SheetContent side="top" className="max-w-md">
+          <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-teal-500 via-amber-400 to-rose-500" />
           <SheetHeader>
             <SheetTitle>Filter products</SheetTitle>
             <SheetDescription>Update filters and sort order with instant preview.</SheetDescription>
           </SheetHeader>
-          <Card className="rounded-none">
+          <Card className="border-border bg-card rounded-none border">
             <FilterPanelContent
               availableFilters={availableFilters}
               draftFilters={draftFilters}

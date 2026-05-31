@@ -58,11 +58,12 @@ export function CartDrawer({ isOpen, onClose, onCheckout }: CartDrawerProps) {
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <SheetContent side="right" className="flex w-full flex-col sm:w-135">
+        <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-teal-500 via-amber-400 to-rose-500" />
         {/* Header with close and item count */}
         <SheetHeader className="border-b pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5" />
+              <ShoppingCart className="h-5 w-5 text-teal-600 dark:text-teal-300" />
               <SheetTitle>Shopping Cart</SheetTitle>
               {!isEmpty && (
                 <Badge variant="default" className="ml-auto">
@@ -80,8 +81,8 @@ export function CartDrawer({ isOpen, onClose, onCheckout }: CartDrawerProps) {
         {/* Loading State */}
         {isLoading && (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-            <span className="ml-2 text-sm text-gray-600">Updating cart...</span>
+            <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
+            <span className="text-muted-foreground ml-2 text-sm">Updating cart...</span>
           </div>
         )}
 
@@ -106,7 +107,7 @@ export function CartDrawer({ isOpen, onClose, onCheckout }: CartDrawerProps) {
               <Button
                 onClick={handleCheckout}
                 disabled={isEmpty || isLoading}
-                className="w-full"
+                className="w-full bg-linear-to-r from-teal-500 to-indigo-500 text-white shadow-lg shadow-teal-500/20 hover:shadow-xl hover:shadow-teal-500/25"
                 size="lg"
               >
                 Proceed to Checkout

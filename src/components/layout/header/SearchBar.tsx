@@ -38,7 +38,7 @@ export function SearchBar() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="text-foreground focus-visible:ring-ring inline-flex items-center justify-center rounded-md p-2 focus-visible:ring-2 focus-visible:outline-none"
+        className="text-foreground focus-visible:ring-ring inline-flex items-center justify-center rounded-md p-2 transition-colors hover:bg-teal-500/10 focus-visible:ring-2 focus-visible:outline-none"
         aria-label={t('action.search')}
       >
         <Search className="h-5 w-5" />
@@ -69,7 +69,8 @@ export function SearchBar() {
                 aria-modal="true"
                 aria-label="Search"
               >
-                <div className="border-border/50 bg-background/95 relative w-full max-w-3xl overflow-hidden rounded-3xl border shadow-2xl ring-1 ring-black/5 backdrop-blur-xl dark:ring-white/10">
+                <div className="border-border/50 bg-background/95 relative w-full max-w-3xl overflow-hidden rounded-3xl border shadow-2xl ring-1 shadow-teal-500/10 ring-teal-500/10 backdrop-blur-xl">
+                  <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-teal-500 via-amber-400 to-rose-500" />
                   {/* Search Icon and Input */}
                   <div className="flex items-center gap-4 px-8 py-6 sm:py-8">
                     <div className="shrink-0">
@@ -82,7 +83,7 @@ export function SearchBar() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.3, delay: 0.1 }}
-                      className="text-foreground placeholder:text-muted-foreground/70 w-full rounded-lg border-0 bg-transparent px-2 py-1 text-xl font-medium transition-all focus:border-transparent focus:ring-2 focus:ring-cyan-500/50 focus-visible:ring-0 focus-visible:outline-none"
+                      className="text-foreground placeholder:text-muted-foreground/70 w-full rounded-lg border-0 bg-transparent px-2 py-1 text-xl font-medium transition-all focus:border-transparent focus:ring-2 focus:ring-teal-500/50 focus-visible:ring-0 focus-visible:outline-none"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                           // Handle search submission
@@ -107,7 +108,7 @@ export function SearchBar() {
                     className="border-border/50 bg-muted/30 border-t px-8 py-6"
                   >
                     <div className="mb-4 flex items-center gap-2">
-                      <div className="h-1 w-1 rounded-full bg-cyan-500"></div>
+                      <div className="h-1 w-1 rounded-full bg-teal-500"></div>
                       <p className="text-muted-foreground text-sm font-medium tracking-wider uppercase">
                         Popular searches
                       </p>
@@ -121,7 +122,7 @@ export function SearchBar() {
                               inputRef.current!.value = item;
                               inputRef.current?.focus();
                             }}
-                            className="border-border/50 bg-background/50 text-foreground rounded-xl border px-4 py-2.5 text-sm font-medium shadow-sm"
+                            className="border-border/50 bg-background/50 text-foreground rounded-xl border px-4 py-2.5 text-sm font-medium shadow-sm transition-colors hover:border-teal-400/50 hover:bg-teal-500/10"
                           >
                             {item}
                           </button>

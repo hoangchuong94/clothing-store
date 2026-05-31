@@ -31,11 +31,11 @@ export function VerifyEmailError({ reason }: VerifyEmailErrorProps) {
           <AlertCircle className="h-7 w-7 text-rose-600 dark:text-rose-400" />
         </div>
         <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-        <p className="text-sm leading-6 text-slate-600 dark:text-slate-400">{description}</p>
+        <p className="text-muted-foreground text-sm leading-6">{description}</p>
       </div>
 
       {reason !== 'already-verified' && (
-        <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-800 dark:bg-slate-900/50">
+        <div className="border-border bg-card rounded-2xl border p-6">
           <h2 className="mb-4 text-sm font-medium">{t('verification.resendTitle')}</h2>
           <ResendVerificationForm />
         </div>
@@ -45,7 +45,10 @@ export function VerifyEmailError({ reason }: VerifyEmailErrorProps) {
         <Button asChild variant="outline" className="flex-1">
           <Link href={APP_ROUTES.AUTH.SIGN_IN}>{t('verification.backToSignIn')}</Link>
         </Button>
-        <Button asChild className="flex-1">
+        <Button
+          asChild
+          className="flex-1 bg-linear-to-r from-teal-500 to-indigo-500 text-white shadow-lg shadow-teal-500/20 hover:shadow-xl hover:shadow-teal-500/25"
+        >
           <Link href={APP_ROUTES.AUTH.VERIFY_EMAIL}>{t('verification.pendingTitle')}</Link>
         </Button>
       </div>

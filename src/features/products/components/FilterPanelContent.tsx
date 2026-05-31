@@ -105,24 +105,22 @@ function FilterPanelContentBase({
 
   return (
     <>
-      <CardHeader className="mx-4 hidden rounded-3xl border border-slate-200/70 bg-slate-50/80 p-6 shadow-sm shadow-slate-900/5 backdrop-blur-xl lg:block dark:border-slate-700/80 dark:bg-slate-950/90 dark:shadow-slate-950/20">
+      <CardHeader className="border-border bg-background/70 mx-4 hidden rounded-3xl border p-6 shadow-sm shadow-teal-500/10 backdrop-blur-xl lg:block">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold tracking-[0.25em] text-cyan-500 uppercase">
+            <p className="text-sm font-semibold tracking-[0.25em] text-teal-600 uppercase dark:text-teal-300">
               {labels.title}
             </p>
-            <h2 className="mt-2 text-2xl font-semibold text-slate-950 dark:text-slate-50">
-              {labels.heading}
-            </h2>
+            <h2 className="text-foreground mt-2 text-2xl font-semibold">{labels.heading}</h2>
           </div>
           <Badge variant={hasActiveFilters ? 'secondary' : 'outline'}>
             {labels.activeCount(activeFiltersCount)}
           </Badge>
         </div>
-        <p className="text-sm text-slate-600 dark:text-slate-400">{labels.subtitle}</p>
+        <p className="text-muted-foreground text-sm">{labels.subtitle}</p>
       </CardHeader>
 
-      <Separator className="lg::block my-4 hidden border-slate-200/80 dark:border-slate-700/80" />
+      <Separator className="border-border lg::block my-4 hidden" />
 
       <CardContent className="space-y-6">
         <div className="grid gap-4 lg:grid-cols-2">
@@ -153,7 +151,7 @@ function FilterPanelContentBase({
           active={Boolean(draftFilters.gender)}
         />
 
-        <div className="border-border rounded-3xl border bg-slate-100/85 p-5 shadow-sm shadow-slate-950/5 transition-all duration-200 dark:border-slate-700/70 dark:bg-slate-900/85 dark:shadow-slate-950/20">
+        <div className="border-border bg-muted/50 rounded-3xl border p-5 shadow-sm shadow-teal-500/10 transition-all duration-200">
           <PriceRangeFilter
             min={availableFilters.priceRange.min}
             max={availableFilters.priceRange.max}
@@ -177,7 +175,7 @@ function FilterPanelContentBase({
           <Button
             variant="outline"
             onClick={onClear}
-            className="w-full border-slate-300 bg-white/90 text-slate-950 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-950/90 dark:text-slate-50 dark:hover:bg-slate-900"
+            className="border-border bg-background text-foreground hover:bg-muted w-full"
             disabled={!hasActiveFilters}
           >
             {labels.clear}
@@ -185,7 +183,7 @@ function FilterPanelContentBase({
         </div>
       </CardContent>
 
-      <Separator className="my-4 border-slate-200/80 dark:border-slate-700/80" />
+      <Separator className="border-border my-4" />
     </>
   );
 }

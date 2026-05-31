@@ -78,15 +78,11 @@ export function LoginForm() {
           aria-invalid={Boolean(errors.email)}
           aria-describedby={errors.email ? 'email-error' : undefined}
           {...register('email')}
-          className="border border-slate-300 dark:border-slate-700"
+          className="border-input border focus:border-teal-400 focus:ring-teal-400/40"
         />
 
         {errors.email && (
-          <p
-            id="email-error"
-            role="alert"
-            className="text-xs font-medium text-red-600 dark:text-red-400"
-          >
+          <p id="email-error" role="alert" className="text-xs font-medium text-rose-500">
             {t(errors.email.message as string)}
           </p>
         )}
@@ -107,15 +103,11 @@ export function LoginForm() {
           aria-invalid={Boolean(errors.password)}
           aria-describedby={errors.password ? 'password-error' : undefined}
           {...register('password')}
-          className="border border-slate-300 dark:border-slate-700"
+          className="border-input border focus:border-teal-400 focus:ring-teal-400/40"
         />
 
         {errors.password && (
-          <p
-            id="password-error"
-            role="alert"
-            className="text-xs font-medium text-red-600 dark:text-red-400"
-          >
+          <p id="password-error" role="alert" className="text-xs font-medium text-rose-500">
             {t(errors.password.message as string)}
           </p>
         )}
@@ -132,7 +124,7 @@ export function LoginForm() {
           />
           <Label
             htmlFor="remember"
-            className="cursor-pointer text-sm font-normal text-slate-600 dark:text-slate-300"
+            className="text-muted-foreground cursor-pointer text-sm font-normal"
           >
             {t('form.rememberMe')}
           </Label>
@@ -140,7 +132,7 @@ export function LoginForm() {
 
         <Link
           href="/forgot-password"
-          className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
+          className="text-muted-foreground text-sm font-medium transition-colors hover:text-teal-600 dark:hover:text-teal-300"
         >
           {t('form.forgotPassword')}
         </Link>
@@ -150,7 +142,7 @@ export function LoginForm() {
       <Button
         type="submit"
         disabled={!isValid || isLoading}
-        className="w-full rounded-3xl bg-linear-to-r from-violet-500 via-fuchsia-500 to-indigo-500 px-5 py-6 text-base font-semibold tracking-tight text-white shadow-[0_20px_60px_rgba(99,102,241,0.22)] transition-all duration-200 hover:shadow-[0_24px_72px_rgba(99,102,241,0.28)]"
+        className="w-full rounded-3xl bg-linear-to-r from-teal-500 via-sky-500 to-indigo-500 px-5 py-6 text-base font-semibold tracking-tight text-white shadow-[0_20px_60px_rgba(20,184,166,0.22)] transition-all duration-200 hover:shadow-[0_24px_72px_rgba(20,184,166,0.28)]"
         aria-busy={isLoading}
       >
         {isLoading ? (
@@ -168,9 +160,9 @@ export function LoginForm() {
 
       {/* Divider */}
       <div className="relative flex items-center gap-3">
-        <div className="flex-1 border-t border-slate-200 dark:border-slate-800" />
-        <span className="text-xs text-slate-500 dark:text-slate-400">{t('form.orContinue')}</span>
-        <div className="flex-1 border-t border-slate-200 dark:border-slate-800" />
+        <div className="border-border flex-1 border-t" />
+        <span className="text-muted-foreground text-xs">{t('form.orContinue')}</span>
+        <div className="border-border flex-1 border-t" />
       </div>
 
       {/* Social Buttons */}

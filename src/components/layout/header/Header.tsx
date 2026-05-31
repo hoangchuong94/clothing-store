@@ -50,7 +50,7 @@ export function Header({ isLoggedIn = false, onLogout }: HeaderProps) {
             <h1 className="text-foreground text-base font-black tracking-widest uppercase sm:text-lg">
               {t('brand')}
             </h1>
-            <span className="absolute right-0 -bottom-1 left-0 h-1 rounded-full bg-linear-to-r from-cyan-500 via-blue-500 to-cyan-500" />
+            <span className="absolute right-0 -bottom-1 left-0 h-1 rounded-full bg-linear-to-r from-teal-500 via-amber-400 to-rose-500" />
           </div>
         </Link>
 
@@ -72,7 +72,7 @@ export function Header({ isLoggedIn = false, onLogout }: HeaderProps) {
             onClick={toggleCart}
             whileTap={{ scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-            className="text-foreground focus-visible:ring-ring relative inline-flex items-center justify-center rounded-md p-2 focus-visible:ring-2 focus-visible:outline-none"
+            className="text-foreground focus-visible:ring-ring relative inline-flex items-center justify-center rounded-md p-2 transition-colors hover:bg-teal-500/10 focus-visible:ring-2 focus-visible:outline-none"
             aria-label={`Shopping cart with ${itemCount} items`}
           >
             <ShoppingCart className="h-5 w-5" />
@@ -81,7 +81,7 @@ export function Header({ isLoggedIn = false, onLogout }: HeaderProps) {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-                className="bg-destructive absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full text-xs font-bold text-white sm:h-5 sm:w-5"
+                className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-xs font-bold text-white sm:h-5 sm:w-5"
               >
                 {itemCount > 9 ? '9+' : itemCount}
               </motion.span>

@@ -11,7 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { resendVerificationEmailAction } from '../../actions/resend-verification';
-import { ResendVerificationSchema, type ResendVerificationInput } from '../../schemas/verification-schemas';
+import {
+  ResendVerificationSchema,
+  type ResendVerificationInput,
+} from '../../schemas/verification-schemas';
 import { AUTH_ERROR_CODES } from '../../types/auth.types';
 import { AuthErrorHandler } from '../../lib/auth-errors';
 import { useAuthError } from '../../hooks/useAuthError';
@@ -96,7 +99,7 @@ export function ResendVerificationForm({ defaultEmail = '' }: ResendVerification
           type="email"
           autoComplete="email"
           placeholder={t('form.placeholderEmail')}
-          className="mt-2"
+          className="border-input mt-2 border focus:border-teal-400 focus:ring-teal-400/40"
           disabled={disabled}
           {...form.register('email')}
         />
@@ -107,7 +110,11 @@ export function ResendVerificationForm({ defaultEmail = '' }: ResendVerification
         )}
       </div>
 
-      <Button type="submit" className="w-full" disabled={disabled}>
+      <Button
+        type="submit"
+        className="w-full bg-linear-to-r from-teal-500 to-indigo-500 text-white shadow-lg shadow-teal-500/20 hover:shadow-xl hover:shadow-teal-500/25"
+        disabled={disabled}
+      >
         {isPending ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />

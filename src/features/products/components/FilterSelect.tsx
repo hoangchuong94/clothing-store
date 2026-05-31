@@ -37,7 +37,7 @@ export function FilterSelect<TValue extends string>({
         <SelectTrigger
           className={cn(
             'focus-visible:border-ring focus-visible:ring-ring/50 flex h-11 w-full items-center justify-between rounded-4xl border px-4 text-sm transition focus-visible:ring-[3px]',
-            active ? 'text-foreground border-cyan-400' : 'border-input text-foreground',
+            active ? 'text-foreground border-teal-400' : 'border-input text-foreground',
           )}
           aria-label={label}
         >

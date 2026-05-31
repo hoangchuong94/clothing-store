@@ -44,7 +44,7 @@ export function PasswordInput({
         <button
           type="button"
           onClick={() => setVisible((state) => !state)}
-          className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+          className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 rounded-full p-2 transition hover:bg-teal-500/10 hover:text-teal-600 dark:hover:text-teal-300"
           aria-label={visible ? 'Hide password' : 'Show password'}
         >
           {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -55,7 +55,7 @@ export function PasswordInput({
           {error}
         </p>
       ) : hint ? (
-        <p id={descriptionId} className="text-sm text-slate-500 dark:text-slate-400">
+        <p id={descriptionId} className="text-muted-foreground text-sm">
           {hint}
         </p>
       ) : null}

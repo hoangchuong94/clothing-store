@@ -17,18 +17,18 @@ export function CartSummary({ subtotal, tax, total }: CartSummaryProps) {
   return (
     <div className="space-y-2 border-t py-3">
       <div className="flex justify-between text-sm">
-        <span className="text-gray-600">Subtotal</span>
+        <span className="text-muted-foreground">Subtotal</span>
         <span>${subtotal.toFixed(2)}</span>
       </div>
 
       <div className="flex justify-between text-sm">
-        <span className="text-gray-600">Tax (8%)</span>
+        <span className="text-muted-foreground">Tax (8%)</span>
         <span>${tax.toFixed(2)}</span>
       </div>
 
       <div className="flex justify-between border-t pt-2 text-lg font-bold">
         <span>Total</span>
-        <span className="text-green-600">${total.toFixed(2)}</span>
+        <span className="text-teal-600 dark:text-teal-300">${total.toFixed(2)}</span>
       </div>
     </div>
   );

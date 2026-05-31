@@ -40,7 +40,7 @@ export function MobileMenu() {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="text-foreground focus-visible:ring-ring inline-flex items-center justify-center rounded-md p-2 focus-visible:ring-2 focus-visible:outline-none md:hidden"
+        className="text-foreground focus-visible:ring-ring inline-flex items-center justify-center rounded-md p-2 transition-colors hover:bg-teal-500/10 focus-visible:ring-2 focus-visible:outline-none md:hidden"
         aria-label="Toggle menu"
         aria-expanded={isOpen}
       >
@@ -66,8 +66,9 @@ export function MobileMenu() {
         initial={{ x: '100%' }}
         animate={{ x: isOpen ? 0 : '100%' }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="border-border bg-background fixed top-16 right-0 z-50 h-[calc(100vh-4rem)] w-full max-w-sm border-l md:hidden"
+        className="border-border bg-background fixed top-16 right-0 z-50 h-[calc(100vh-4rem)] w-full max-w-sm border-l shadow-2xl shadow-teal-500/10 md:hidden"
       >
+        <div className="h-1 bg-linear-to-r from-teal-500 via-amber-400 to-rose-500" />
         <nav className="flex flex-col gap-2 p-4 sm:gap-1 sm:p-4">
           {navItems.map((item, index) => {
             const href = `/${item.href}`;
@@ -84,7 +85,9 @@ export function MobileMenu() {
                   href={href}
                   onClick={() => setIsOpen(false)}
                   className={`block rounded-lg px-4 py-3 text-base font-bold tracking-widest uppercase sm:px-3 sm:py-2 sm:text-sm ${
-                    isActive ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
+                    isActive
+                      ? 'bg-teal-500/10 text-teal-700 dark:text-teal-200'
+                      : 'text-muted-foreground hover:bg-muted'
                   }`}
                 >
                   {t(item.labelKey)}

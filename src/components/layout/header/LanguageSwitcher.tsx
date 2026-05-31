@@ -22,14 +22,14 @@ export function LanguageSwitcher() {
   };
 
   const getLanguageName = (locale: string) => {
-    return locale === 'en' ? 'English' : locale === 'vi' ? 'Tiếng Việt' : locale.toUpperCase();
+    return locale === 'en' ? 'English' : locale === 'vi' ? 'Tieng Viet' : locale.toUpperCase();
   };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="text-foreground focus-visible:ring-ring inline-flex items-center justify-center gap-2 rounded-md p-2 focus-visible:ring-2 focus-visible:outline-none"
+          className="text-foreground focus-visible:ring-ring inline-flex items-center justify-center gap-2 rounded-md p-2 transition-colors hover:bg-teal-500/10 focus-visible:ring-2 focus-visible:outline-none"
           aria-label={t('language.toggle') || 'Change language'}
           title={getLanguageName(currentLocale)}
         >
@@ -45,7 +45,7 @@ export function LanguageSwitcher() {
             className="flex items-center justify-between gap-3"
           >
             {getLanguageName(locale)}
-            {currentLocale === locale && <Check className="h-4 w-4 text-green-500" />}
+            {currentLocale === locale && <Check className="h-4 w-4 text-teal-500" />}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

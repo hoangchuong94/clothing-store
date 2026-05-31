@@ -26,7 +26,7 @@ export function NavMenu() {
               {/* Active Indicator */}
               {isActive && (
                 <span
-                  className="absolute right-0 bottom-0 left-0 h-1 rounded-full bg-linear-to-r from-cyan-500 via-blue-500 to-cyan-500"
+                  className="absolute right-0 bottom-0 left-0 h-1 rounded-full bg-linear-to-r from-teal-500 via-amber-400 to-rose-500"
                   style={{ transformOrigin: '0.5' }}
                 />
               )}

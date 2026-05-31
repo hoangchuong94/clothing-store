@@ -16,26 +16,29 @@ export function VerifyEmailPending({ email }: VerifyEmailPendingProps) {
   return (
     <div className="mx-auto w-full max-w-md space-y-8">
       <div className="space-y-3 text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-100 dark:bg-violet-950/50">
-          <MailCheck className="h-7 w-7 text-violet-600 dark:text-violet-400" />
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 shadow-sm dark:bg-amber-400/10 dark:text-amber-300">
+          <MailCheck className="h-7 w-7" />
         </div>
         <h1 className="text-2xl font-semibold tracking-tight">{t('verification.pendingTitle')}</h1>
-        <p className="text-sm leading-6 text-slate-600 dark:text-slate-400">
+        <p className="text-muted-foreground text-sm leading-6">
           {email
             ? t('verification.pendingDescriptionWithEmail', { email })
             : t('verification.pendingDescription')}
         </p>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-800 dark:bg-slate-900/50">
-        <h2 className="mb-4 text-sm font-medium text-slate-900 dark:text-slate-100">
+      <div className="border-border bg-card rounded-2xl border p-6">
+        <h2 className="text-foreground mb-4 text-sm font-medium">
           {t('verification.resendTitle')}
         </h2>
         <ResendVerificationForm defaultEmail={email} />
       </div>
 
-      <p className="text-center text-sm text-slate-600 dark:text-slate-400">
-        <Link href={APP_ROUTES.AUTH.SIGN_IN} className="font-medium text-violet-600 hover:underline">
+      <p className="text-muted-foreground text-center text-sm">
+        <Link
+          href={APP_ROUTES.AUTH.SIGN_IN}
+          className="font-medium text-teal-600 hover:underline dark:text-teal-300"
+        >
           {t('verification.backToSignIn')}
         </Link>
       </p>

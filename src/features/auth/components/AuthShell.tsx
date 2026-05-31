@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import * as React from 'react';
 import { useTranslations } from 'next-intl';
 import { usePathname } from '@/i18n/navigation';
@@ -17,35 +17,41 @@ export function AuthShell({ children }: AuthShellProps) {
   const pageHeading = activeTab === 'login' ? t('form.loginHeading') : t('form.registerHeading');
 
   return (
-    <main className="relative flex min-h-screen items-center overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(99,102,241,0.16),transparent_25%),radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.12),transparent_18%)] p-4 text-slate-950 transition-colors duration-500 dark:bg-slate-950 dark:text-slate-100">
-      <div className="relative mx-auto grid max-w-6xl gap-8 overflow-hidden rounded-[2rem] border border-slate-900/5 bg-white/80 shadow-[0_40px_120px_rgba(15,23,42,0.12)] backdrop-blur-xl sm:gap-6 md:grid-cols-[1.15fr_1fr] dark:border-white/10 dark:bg-slate-950/80 dark:shadow-none">
-        <div className="order-last rounded-[2rem] bg-linear-to-br from-slate-100 via-slate-200 to-purple-200 p-8 text-slate-950 shadow-2xl shadow-slate-950/20 sm:p-10 md:order-first dark:from-slate-950 dark:via-slate-900 dark:to-purple-950 dark:text-white">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(129,140,248,0.25),transparent_20%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.16),transparent_20%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(129,140,248,0.25),transparent_20%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.16),transparent_20%)]" />
+    <main className="bg-background text-foreground relative flex min-h-screen items-center overflow-hidden p-4 transition-colors duration-500">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_12%_18%,rgba(20,184,166,0.16),transparent_30%),radial-gradient(circle_at_88%_22%,rgba(245,158,11,0.14),transparent_28%),radial-gradient(circle_at_50%_82%,rgba(244,63,94,0.12),transparent_34%)]" />
+
+      <div className="border-border bg-card/90 relative mx-auto grid max-w-6xl gap-8 overflow-hidden rounded-[2rem] border shadow-[0_40px_120px_rgba(20,184,166,0.12)] backdrop-blur-xl sm:gap-6 md:grid-cols-[1.15fr_1fr]">
+        <div className="bg-[radial-gradient(circle_at_top_right,rgba(20,184,166,0.22),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(244,63,94,0.18),transparent_30%),linear-gradient(135deg,theme(colors.card),rgba(245,158,11,0.1),theme(colors.card))] relative order-last overflow-hidden rounded-[2rem] p-8 shadow-2xl shadow-teal-500/10 sm:p-10 md:order-first">
+          <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-teal-500 via-amber-400 to-rose-500" />
+
           <div className="relative flex h-full flex-col justify-between gap-8">
             <div className="space-y-6">
-              <div className="flex items-center gap-3 text-sm font-medium tracking-[0.3em] text-slate-600 uppercase dark:text-slate-300">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-3xl border border-slate-300 bg-slate-50 dark:border-white/15 dark:bg-white/5">
-                  <Sparkles className="h-5 w-5 text-violet-500 dark:text-violet-300" />
+              <div className="text-muted-foreground flex items-center gap-3 text-sm font-medium tracking-[0.3em] uppercase">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-3xl border border-amber-300/50 bg-amber-50 text-amber-600 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-300">
+                  <Sparkles className="h-5 w-5" />
                 </span>
                 {t('hero.badge')}
               </div>
               <div className="space-y-4">
-                <h1 className="text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl dark:text-white">
-                  {t('hero.title')}
+                <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+                  <span className="from-foreground to-foreground bg-linear-to-r via-teal-600 bg-clip-text text-transparent dark:via-teal-300">
+                    {t('hero.title')}
+                  </span>
                 </h1>
-                <p className="max-w-md text-base leading-7 text-slate-600 dark:text-slate-300">
+                <p className="text-muted-foreground max-w-md text-base leading-7">
                   {t('hero.description')}
                 </p>
               </div>
             </div>
-            <div className="grid gap-4 rounded-[1.75rem] border border-slate-300 bg-slate-50 p-6 shadow-xl shadow-slate-950/10 backdrop-blur-xl dark:border-white/10 dark:bg-white/10">
-              <div className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-200">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-slate-100 text-slate-900 dark:bg-white/10 dark:text-slate-100">
-                  <ShieldCheck className="h-5 w-5 text-slate-700 dark:text-slate-100" />
+
+            <div className="border-border bg-background/70 grid gap-4 rounded-[1.75rem] border p-6 shadow-xl shadow-teal-500/10 backdrop-blur-xl">
+              <div className="text-foreground flex items-center gap-3 text-sm">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-teal-50 text-teal-600 dark:bg-teal-400/10 dark:text-teal-300">
+                  <ShieldCheck className="h-5 w-5" />
                 </span>
                 {t('hero.secureByDesign')}
               </div>
-              <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
+              <ul className="text-muted-foreground space-y-3 text-sm">
                 <li>• {t('hero.feature1')}</li>
                 <li>• {t('hero.feature2')}</li>
                 <li>• {t('hero.feature3')}</li>
@@ -57,10 +63,10 @@ export function AuthShell({ children }: AuthShellProps) {
         <div className="relative z-50 flex flex-col gap-4 p-6 sm:p-8 md:order-last">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold tracking-[0.24em] text-slate-500 uppercase dark:text-slate-400">
+              <p className="text-muted-foreground text-sm font-semibold tracking-[0.24em] uppercase">
                 {t('header.welcomeBack')}
               </p>
-              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 dark:text-slate-50">
+              <h2 className="text-foreground mt-2 text-3xl font-semibold tracking-tight">
                 {pageHeading}
               </h2>
             </div>
@@ -68,12 +74,12 @@ export function AuthShell({ children }: AuthShellProps) {
 
           <AuthTabs activeTab={activeTab} />
 
-          <div className="space-y-5 rounded-[2rem] border border-slate-200/70 bg-slate-50/80 p-6 shadow-[0_20px_70px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-slate-800/70 dark:bg-slate-950/80 dark:shadow-none">
+          <div className="border-border bg-background/75 space-y-5 rounded-[2rem] border p-6 shadow-[0_20px_70px_rgba(20,184,166,0.08)] backdrop-blur-xl">
             {children}
           </div>
 
-          <div className="flex gap-2 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between dark:text-slate-400">
-            <p className="text-xs text-slate-400">{t('footer.onboarding')}</p>
+          <div className="text-muted-foreground flex gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-muted-foreground text-xs">{t('footer.onboarding')}</p>
           </div>
         </div>
       </div>

@@ -20,7 +20,7 @@ export function SocialButtons({ onGoogle, onGitHub, disabled = false }: SocialBu
         variant="outline"
         size="default"
         disabled={disabled}
-        className="w-full gap-2 rounded-3xl border-slate-200 bg-white/80 text-slate-700 dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-200"
+        className="border-border bg-background/80 text-foreground w-full gap-2 rounded-3xl hover:border-teal-400/50 hover:bg-teal-500/10"
         onClick={onGoogle}
       >
         <GoogleIcon className="h-4 w-4" />
@@ -31,7 +31,7 @@ export function SocialButtons({ onGoogle, onGitHub, disabled = false }: SocialBu
         variant="outline"
         size="default"
         disabled={disabled}
-        className="w-full gap-2 rounded-3xl border-slate-200 bg-white/80 text-slate-700 dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-200"
+        className="border-border bg-background/80 text-foreground w-full gap-2 rounded-3xl hover:border-indigo-400/50 hover:bg-indigo-500/10"
         onClick={onGitHub}
       >
         <GithubIcon className="h-4 w-4" />

@@ -11,16 +11,19 @@ export function VerifyEmailSuccess() {
 
   return (
     <div className="mx-auto w-full max-w-md space-y-8 text-center">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-950/50">
-        <CheckCircle2 className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50 text-teal-600 shadow-sm dark:bg-teal-400/10 dark:text-teal-300">
+        <CheckCircle2 className="h-7 w-7" />
       </div>
       <div className="space-y-3">
         <h1 className="text-2xl font-semibold tracking-tight">{t('verification.successTitle')}</h1>
-        <p className="text-sm leading-6 text-slate-600 dark:text-slate-400">
+        <p className="text-muted-foreground text-sm leading-6">
           {t('verification.successDescription')}
         </p>
       </div>
-      <Button asChild className="w-full">
+      <Button
+        asChild
+        className="w-full bg-linear-to-r from-teal-500 to-indigo-500 text-white shadow-lg shadow-teal-500/20 hover:shadow-xl hover:shadow-teal-500/25"
+      >
         <Link href={APP_ROUTES.AUTH.SIGN_IN}>{t('verification.signInNow')}</Link>
       </Button>
     </div>

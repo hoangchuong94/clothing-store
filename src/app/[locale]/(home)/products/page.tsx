@@ -18,7 +18,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const currentFilters = parseProductFilters(resolvedSearchParams);
 
   return (
-    <div className="min-h-screen py-12 dark:bg-slate-950">
+    <div className="bg-background min-h-screen py-12">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <ProductsHero badge={t('badge')} heading={t('heading')} description={t('description')} />
         <div className="grid gap-8 xl:grid-cols-[300px_1fr]">
@@ -26,8 +26,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           <section className="space-y-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm tracking-[0.25em] text-cyan-400 uppercase">Results</p>
-                <h2 className="mt-2 text-3xl font-semibold text-white">
+                <p className="text-sm font-semibold tracking-[0.25em] text-teal-600 uppercase dark:text-teal-300">
+                  Results
+                </p>
+                <h2 className="text-foreground mt-2 text-3xl font-semibold">
                   {products.length} items found
                 </h2>
               </div>

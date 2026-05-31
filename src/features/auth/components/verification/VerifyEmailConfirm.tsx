@@ -38,18 +38,18 @@ export function VerifyEmailConfirm({ token }: VerifyEmailConfirmProps) {
   return (
     <div className="mx-auto w-full max-w-md space-y-8 text-center">
       <div className="space-y-3">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-100 dark:bg-violet-950/50">
-          <MailCheck className="h-7 w-7 text-violet-600 dark:text-violet-400" aria-hidden />
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 shadow-sm dark:bg-amber-400/10 dark:text-amber-300">
+          <MailCheck className="h-7 w-7" aria-hidden />
         </div>
         <h1 className="text-2xl font-semibold tracking-tight">{t('verification.confirmTitle')}</h1>
-        <p className="text-sm leading-6 text-slate-600 dark:text-slate-400">
+        <p className="text-muted-foreground text-sm leading-6">
           {t('verification.confirmDescription')}
         </p>
       </div>
 
       <Button
         type="button"
-        className="w-full"
+        className="w-full bg-linear-to-r from-teal-500 to-indigo-500 text-white shadow-lg shadow-teal-500/20 hover:shadow-xl hover:shadow-teal-500/25"
         disabled={isPending}
         onClick={handleConfirm}
         aria-busy={isPending}

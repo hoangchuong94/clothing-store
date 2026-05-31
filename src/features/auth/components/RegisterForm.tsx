@@ -56,7 +56,7 @@ export function RegisterForm() {
             {...register('name')}
             aria-invalid={Boolean(formState.errors.name)}
             aria-describedby={formState.errors.name ? 'register-name-error' : undefined}
-            className="mt-2 border border-slate-300 dark:border-slate-700"
+            className="border-input mt-2 border focus:border-teal-400 focus:ring-teal-400/40"
             disabled={isLoading}
           />
           {formState.errors.name?.message && (
@@ -77,7 +77,7 @@ export function RegisterForm() {
             {...register('email')}
             aria-invalid={Boolean(formState.errors.email)}
             aria-describedby={formState.errors.email ? 'register-email-error' : undefined}
-            className="mt-2 border border-slate-300 dark:border-slate-700"
+            className="border-input mt-2 border focus:border-teal-400 focus:ring-teal-400/40"
             disabled={isLoading}
           />
           {formState.errors.email?.message && (
@@ -99,7 +99,7 @@ export function RegisterForm() {
               formState.errors.password ? t(formState.errors.password.message as string) : undefined
             }
             disabled={isLoading}
-            className="border border-slate-300 dark:border-slate-700"
+            className="border-input border focus:border-teal-400 focus:ring-teal-400/40"
           />
           {passwordValue && <PasswordStrength strength={passwordStrength} />}
         </div>
@@ -117,7 +117,7 @@ export function RegisterForm() {
               : undefined
           }
           disabled={isLoading}
-          className="border border-slate-300 dark:border-slate-700"
+          className="border-input border focus:border-teal-400 focus:ring-teal-400/40"
         />
       </div>
 
@@ -125,7 +125,7 @@ export function RegisterForm() {
       <Button
         type="submit"
         disabled={!formState.isValid || isLoading}
-        className="w-full rounded-3xl bg-linear-to-r from-violet-500 via-fuchsia-500 to-indigo-500 px-5 py-6 text-base font-semibold tracking-tight text-white shadow-[0_20px_60px_rgba(99,102,241,0.22)] transition-all duration-200 hover:shadow-[0_24px_72px_rgba(99,102,241,0.28)]"
+        className="w-full rounded-3xl bg-linear-to-r from-teal-500 via-sky-500 to-indigo-500 px-5 py-6 text-base font-semibold tracking-tight text-white shadow-[0_20px_60px_rgba(20,184,166,0.22)] transition-all duration-200 hover:shadow-[0_24px_72px_rgba(20,184,166,0.28)]"
         aria-busy={isLoading}
       >
         {isLoading ? (
@@ -143,11 +143,9 @@ export function RegisterForm() {
 
       {/* Divider */}
       <div className="relative flex items-center gap-3">
-        <div className="flex-1 border-t border-slate-200 dark:border-slate-800" />
-        <span className="text-xs text-slate-500 dark:text-slate-400">
-          {t('form.orContinueWith')}
-        </span>
-        <div className="flex-1 border-t border-slate-200 dark:border-slate-800" />
+        <div className="border-border flex-1 border-t" />
+        <span className="text-muted-foreground text-xs">{t('form.orContinueWith')}</span>
+        <div className="border-border flex-1 border-t" />
       </div>
 
       {/* Social Buttons */}

@@ -65,21 +65,21 @@ export function ModeToggle() {
           className="flex items-center justify-between gap-3"
         >
           {t('theme.light')}
-          {theme === 'light' && <Check className="h-4 w-4 text-green-500" />}
+          {theme === 'light' && <Check className="h-4 w-4 text-teal-500" />}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => saveTheme('dark')}
           className="flex items-center justify-between gap-3"
         >
           {t('theme.dark')}
-          {theme === 'dark' && <Check className="h-4 w-4 text-green-500" />}
+          {theme === 'dark' && <Check className="h-4 w-4 text-teal-500" />}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => saveTheme('system')}
           className="flex items-center justify-between gap-3"
         >
           {t('theme.system')}
-          {theme === 'system' && <Check className="h-4 w-4 text-green-500" />}
+          {theme === 'system' && <Check className="h-4 w-4 text-teal-500" />}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

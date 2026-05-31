@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { testimonials } from '@/features/products/data/ui';
-import { Quote } from '@/components/ui/icon';
+import { Quote, Star } from '@/components/ui/icon';
 
 export function TestimonialsSection() {
   const t = useTranslations('home.testimonials');
@@ -30,9 +30,8 @@ export function TestimonialsSection() {
   };
 
   return (
-    <section className="relative bg-white py-20 sm:py-32 dark:bg-slate-950">
+    <section className="border-border bg-background relative border-t py-20 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -40,28 +39,20 @@ export function TestimonialsSection() {
           transition={{ duration: 0.6 }}
           className="mb-12 text-center sm:mb-16"
         >
-          {/* Badge */}
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-pink-300 bg-linear-to-r from-pink-100 to-purple-100 px-4 py-2 shadow-sm dark:border-pink-400 dark:from-pink-500/20 dark:to-purple-500/20 dark:shadow-lg dark:shadow-pink-500/20">
-            <span className="relative flex h-2 w-2 rounded-full bg-pink-500">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pink-400 opacity-75"></span>
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-indigo-300/50 bg-indigo-50/80 px-4 py-2 text-indigo-900 shadow-sm dark:border-indigo-400/20 dark:bg-indigo-400/10 dark:text-indigo-100">
+            <span className="relative flex h-2 w-2 rounded-full bg-indigo-500">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75" />
             </span>
-            <span className="text-sm font-bold tracking-widest text-pink-600 uppercase dark:text-pink-300">
-              {t('badge')}
-            </span>
+            <span className="text-sm font-bold tracking-widest uppercase">{t('badge')}</span>
           </div>
 
-          {/* Title */}
-          <h2 className="text-4xl font-black sm:text-5xl md:text-6xl">
-            <span className="bg-linear-to-r from-slate-900 via-purple-600 to-pink-600 bg-clip-text text-transparent dark:from-white dark:to-slate-300">
-              {t('title')}
-            </span>
+          <h2 className="text-foreground text-4xl font-black sm:text-5xl md:text-6xl">
+            {t('title')}
           </h2>
 
-          {/* Description */}
-          <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">{t('description')}</p>
+          <p className="text-muted-foreground mt-4 text-lg">{t('description')}</p>
         </motion.div>
 
-        {/* Testimonials */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -73,40 +64,29 @@ export function TestimonialsSection() {
             <motion.div
               key={testimonial.id}
               variants={itemVariants}
-              whileHover={{
-                y: -6,
-                boxShadow: '0 20px 40px rgba(99, 102, 241, 0.15)',
-              }}
-              className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-6 transition-all duration-300 hover:border-purple-300 sm:p-8 dark:border-slate-700 dark:bg-linear-to-r dark:from-slate-800 dark:to-slate-900"
+              whileHover={{ y: -6 }}
+              className="group border-border bg-card text-card-foreground relative overflow-hidden rounded-2xl border p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/15 sm:p-8"
             >
-              {/* Hover gradient */}
-              <div className="absolute inset-0 -z-10 bg-linear-to-r from-cyan-500/10 to-purple-500/10 opacity-0 transition-opacity group-hover:opacity-100" />
-
-              {/* Quote icon */}
+              <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-teal-400 via-amber-400 to-rose-400 opacity-80" />
               <motion.div
                 initial={{ scale: 0.85, opacity: 0.6 }}
                 whileHover={{ scale: 1, opacity: 1 }}
-                className="inline-block rounded-lg bg-purple-100 p-2 text-purple-600 dark:bg-cyan-500/20 dark:text-cyan-400"
+                className="inline-block rounded-lg bg-indigo-50 p-2 text-indigo-600 dark:bg-indigo-400/10 dark:text-indigo-200"
               >
                 <Quote size={22} />
               </motion.div>
 
-              {/* Stars */}
-              <div className="mt-4 flex gap-1">
+              <div className="mt-4 flex gap-1 text-amber-400">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <span key={i} className="text-lg text-yellow-400">
-                    ★
-                  </span>
+                  <Star key={i} size={18} fill="currentColor" />
                 ))}
               </div>
 
-              {/* Content */}
-              <p className="mt-4 text-base text-slate-700 sm:text-lg dark:text-slate-300">
+              <p className="text-muted-foreground mt-4 text-base sm:text-lg">
                 {testimonial.content}
               </p>
 
-              {/* Author */}
-              <div className="mt-6 flex items-center gap-3 border-t border-slate-200 pt-6 dark:border-slate-700">
+              <div className="border-border mt-6 flex items-center gap-3 border-t pt-6">
                 <div className="relative h-12 w-12 overflow-hidden rounded-full">
                   <Image
                     src={testimonial.avatar}
@@ -117,19 +97,14 @@ export function TestimonialsSection() {
                   />
                 </div>
                 <div>
-                  <div className="font-bold text-slate-900 dark:text-white">
-                    {testimonial.author}
-                  </div>
-                  <div className="text-sm text-slate-500 dark:text-slate-400">
-                    {testimonial.role}
-                  </div>
+                  <div className="text-foreground font-bold">{testimonial.author}</div>
+                  <div className="text-muted-foreground text-sm">{testimonial.role}</div>
                 </div>
               </div>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* Trust badges */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -146,12 +121,12 @@ export function TestimonialsSection() {
             <motion.div
               key={index}
               whileHover={{ y: -5 }}
-              className="rounded-lg border border-slate-200 bg-white p-4 text-center shadow-sm backdrop-blur-sm sm:p-6 dark:border-slate-700 dark:bg-slate-800/50"
+              className="border-border bg-card text-card-foreground rounded-lg border p-4 text-center shadow-sm transition-all hover:border-teal-400/40 hover:shadow-md hover:shadow-teal-500/10 sm:p-6"
             >
-              <div className="text-2xl font-black text-purple-600 sm:text-3xl dark:text-cyan-400">
+              <div className="text-2xl font-black text-teal-600 sm:text-3xl dark:text-teal-300">
                 {badge.number}
               </div>
-              <div className="mt-2 text-sm font-medium text-slate-600 sm:mt-3 dark:text-slate-400">
+              <div className="text-muted-foreground mt-2 text-sm font-medium sm:mt-3">
                 {badge.label}
               </div>
             </motion.div>
