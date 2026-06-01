@@ -38,3 +38,8 @@ export function mapCurrentUserToSession(user: CurrentUser | null): UserSession {
     userId: user.userId,
   };
 }
+
+export async function getCurrentUserSession(): Promise<UserSession> {
+  const user = await getCurrentUser();
+  return mapCurrentUserToSession(user);
+}

@@ -25,4 +25,9 @@ export {
   useRemoveCartItem,
   useUpdateCartItem,
   useCartPersistence,
+  useCartAuthSync,
 } from './hooks';
+
+export { AddToCartButton } from './components/AddToCartButton';
+
+export { store, type AppDispatch, type RootState } from './lib/redux';
