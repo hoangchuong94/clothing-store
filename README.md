@@ -1,118 +1,119 @@
-# Clothing Store
+﻿# Clothing Store
 
-A modern e-commerce clothing store built with Next.js, featuring internationalization, authentication forms, and responsive design.
+Ứng dụng thương mại điện tử thời trang xây bằng Next.js, có đa ngôn ngữ, xác thực người dùng và giao diện responsive.
 
-## Getting Started
+## Bắt đầu
 
-### Prerequisites
+### Yêu cầu
 
-- Node.js 18+
+- Node.js 20
 - pnpm
 
-### Installation
+### Cài đặt
 
-1. Clone the repository
-2. Install dependencies:
+1. Clone repository.
+2. Cài dependencies:
 
    ```bash
    pnpm install
    ```
 
-3. Generate Prisma client code:
+3. Sinh Prisma client:
 
    ```bash
    pnpm generate
    ```
 
-4. Copy environment variables:
+4. Sao chép biến môi trường:
 
    ```bash
    cp .env.example .env.local
    ```
 
-   Fill in the required values. At minimum, set `DATABASE_URL`, `AUTH_SECRET`, and `NEXT_PUBLIC_BASE_URL`.
+   Điền các giá trị cần thiết. Tối thiểu cần `DATABASE_URL`, `AUTH_SECRET` và `NEXT_PUBLIC_BASE_URL`.
 
-5. Run the development server:
+5. Chạy development server:
+
    ```bash
    pnpm dev
    ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Mở [http://localhost:3000](http://localhost:3000) trong trình duyệt để xem ứng dụng.
 
 ## Scripts
 
-- `pnpm dev` - Start development server
-- `pnpm build` - Build for production
-- `pnpm start` - Start production server
-- `pnpm lint` - Run ESLint
-- `pnpm test` - Run unit tests
-- `pnpm generate` - Generate Prisma client code
+- `pnpm dev` - Chạy development server.
+- `pnpm build` - Build production.
+- `pnpm start` - Chạy bản production.
+- `pnpm lint` - Chạy ESLint.
+- `pnpm test` - Chạy unit test.
+- `pnpm generate` - Generate Prisma client.
+- `pnpm format` - Kiểm tra định dạng bằng Prettier.
 
-## Database and Prisma
+Lưu ý: `package.json` hiện có các script `audit:products` và `smoke:products*`, nhưng các file trong `scripts/` mà chúng trỏ tới chưa tồn tại trong repo.
 
-- Copy environment variables from `.env.example` to `.env.local`
-- Run `pnpm generate` after changing the Prisma schema or on a fresh clone
-- Run migrations locally with `pnpm prisma migrate dev`
-- Seed roles, catalog user, categories, and **13 canonical products** (`prod-001` … `prod-013`):
+## Database và Prisma
+
+- Sao chép biến môi trường từ `.env.example` sang `.env.local`.
+- Chạy `pnpm generate` sau khi đổi Prisma schema hoặc sau khi clone mới.
+- Chạy migration local:
+
+  ```bash
+  pnpm prisma migrate dev
+  ```
+
+- Seed roles, seed user, categories và **13 sản phẩm canonical** (`prod-001` … `prod-013`):
 
   ```bash
   pnpm prisma db seed
   ```
 
-- Verify product identity before enabling Prisma repository mode:
-
-  ```bash
-  pnpm audit:products
-  pnpm smoke:products
-  pnpm smoke:products:static
-  ```
-
-See [docs/product-repository-rollout.md](docs/product-repository-rollout.md) for SQL audits, manual smoke, and `PRODUCT_REPOSITORY_MODE` rollout (STATIC / PRISMA / AUTO).
-
 ## Build
 
-- Build the application for production:
+Build ứng dụng cho production:
 
-  ```bash
-  pnpm build
-  ```
+```bash
+pnpm build
+```
 
-## Deployment
+## Deploy
 
 ### Vercel
 
-1. Connect your repository to Vercel
-2. Set environment variables in Vercel dashboard
-3. Deploy
+1. Kết nối repository với Vercel.
+2. Cấu hình biến môi trường trong dashboard của Vercel.
+3. Deploy.
 
 ### Docker
 
-Build and run with Docker:
+Build và chạy bằng Docker:
 
 ```bash
 docker build -t clothing-store .
 docker run -p 3000:3000 clothing-store
 ```
 
-### Other Platforms
+### Nền tảng khác
 
-This is a standard Next.js app that can be deployed to Netlify, Railway, or any Node.js hosting.
+Đây là ứng dụng Next.js tiêu chuẩn, có thể deploy lên Netlify, Railway hoặc hạ tầng Node.js tương thích.
 
-## Features
+## Tính năng
 
-- Internationalization (English/Vietnamese)
-- Authentication forms
-- Responsive design with Tailwind CSS
-- Dark/Light mode toggle
-- Framer Motion animations
+- Đa ngôn ngữ Anh/Việt.
+- Form xác thực người dùng.
+- Giao diện responsive với Tailwind CSS.
+- Chuyển đổi dark/light mode.
+- Animation bằng Framer Motion.
+- Catalog sản phẩm và cart drawer.
 
-## Technologies
+## Công nghệ
 
 - Next.js 16
 - React 19
 - TypeScript
 - Tailwind CSS
 - Framer Motion
-- Next Intl
+- next-intl
 - Radix UI
-- Zod for validation
+- Zod
+- Prisma
