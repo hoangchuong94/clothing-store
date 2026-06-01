@@ -29,15 +29,19 @@ type UserForResend = {
   name: string | null;
 } & ResendState;
 
-async function invalidateActiveVerificationTokens(
-  userId: string,
+type ClaimedResendSlot = Pick<
+  ResendState,
+  'verificationResendAt' | 'verificationResendCount' | 'verificationResendWindowStart'
+>;
+
+async function invalidateVerificationTokenById(
+  tokenId: string,
   tx: TransactionClient | typeof prisma = prisma,
 ): Promise<void> {
   await tx.emailVerificationToken.updateMany({
     where: {
-      userId,
+      id: tokenId,
       usedAt: null,
-      expiresAt: { gt: new Date() },
     },
     data: {
       usedAt: new Date(),
@@ -45,33 +49,43 @@ async function invalidateActiveVerificationTokens(
   });
 }
 
-export async function issueVerificationToken(
+async function issueVerificationTokenRecord(
   userId: string,
   email: string,
   tx: TransactionClient | typeof prisma = prisma,
-): Promise<string> {
+): Promise<{ plainToken: string; tokenId: string }> {
   const plainToken = generateVerificationToken();
   const hashedToken = hashVerificationToken(plainToken);
   const expiresAt = getVerificationExpiryDate();
 
-  await invalidateActiveVerificationTokens(userId, tx);
-
-  await tx.emailVerificationToken.create({
+  const tokenRecord = await tx.emailVerificationToken.create({
     data: {
       userId,
       email: email.toLowerCase().trim(),
       hashedToken,
       expiresAt,
     },
+    select: {
+      id: true,
+    },
   });
 
+  return { plainToken, tokenId: tokenRecord.id };
+}
+
+export async function issueVerificationToken(
+  userId: string,
+  email: string,
+  tx: TransactionClient | typeof prisma = prisma,
+): Promise<string> {
+  const { plainToken } = await issueVerificationTokenRecord(userId, email, tx);
   return plainToken;
 }
 
 async function tryClaimResendSlot(
   userId: string,
   previousState: ResendState,
-): Promise<boolean> {
+): Promise<{ claimed: true; claimedState: ClaimedResendSlot } | { claimed: false }> {
   const resendState = nextResendState(previousState);
   const updated = await prisma.user.updateMany({
     where: {
@@ -82,22 +96,46 @@ async function tryClaimResendSlot(
     },
     data: resendState,
   });
-  return updated.count === 1;
+  if (updated.count !== 1) {
+    return { claimed: false };
+  }
+  return { claimed: true, claimedState: resendState };
+}
+
+async function rollbackResendSlot(
+  userId: string,
+  claimedState: ClaimedResendSlot,
+  previousState: ResendState,
+): Promise<void> {
+  await prisma.user.updateMany({
+    where: {
+      id: userId,
+      verificationResendAt: claimedState.verificationResendAt,
+      verificationResendCount: claimedState.verificationResendCount,
+      verificationResendWindowStart: claimedState.verificationResendWindowStart,
+    },
+    data: previousState,
+  });
 }
 
 async function sendVerificationToUser(
   user: UserForResend,
   locale: EmailLocale,
 ): Promise<void> {
-  const plainToken = await issueVerificationToken(user.id, user.email);
+  const { plainToken, tokenId } = await issueVerificationTokenRecord(user.id, user.email);
 
-  await sendVerificationEmail({
-    to: user.email,
-    name: user.name,
-    verificationUrl: buildVerificationUrl(locale, plainToken),
-    locale,
-    expiresInHours: verificationConfig.tokenExpiryHours,
-  });
+  try {
+    await sendVerificationEmail({
+      to: user.email,
+      name: user.name,
+      verificationUrl: buildVerificationUrl(locale, plainToken),
+      locale,
+      expiresInHours: verificationConfig.tokenExpiryHours,
+    });
+  } catch (error) {
+    await invalidateVerificationTokenById(tokenId).catch(() => undefined);
+    throw error;
+  }
 }
 
 export async function createAndSendVerification(
@@ -158,13 +196,18 @@ export async function createAndSendVerification(
     };
   }
 
-  const claimed = await tryClaimResendSlot(user.id, resendState);
+  const claim = await tryClaimResendSlot(user.id, resendState);
 
-  if (!claimed) {
+  if (!claim.claimed) {
     return { sent: false, rateLimited: true };
   }
 
-  await sendVerificationToUser(resendUser, locale);
+  try {
+    await sendVerificationToUser(resendUser, locale);
+  } catch (error) {
+    await rollbackResendSlot(user.id, claim.claimedState, resendState).catch(() => undefined);
+    throw error;
+  }
 
   return { sent: true };
 }
@@ -297,44 +340,31 @@ export async function resendVerificationByEmail(
   const limit = checkResendRateLimit(resendState);
 
   if (!limit.allowed) {
-    if (limit.reason === 'COOLDOWN') {
-      return {
-        success: false,
-        code: 'RESEND_COOLDOWN',
-        retryAfterSeconds: limit.retryAfterSeconds,
-      };
-    }
-    return { success: false, code: 'RESEND_HOURLY_LIMIT' };
-  }
-
-  const claimed = await tryClaimResendSlot(user.id, resendState);
-
-  if (!claimed) {
-    const recheck = checkResendRateLimit(resendState);
-    if (!recheck.allowed && recheck.reason === 'COOLDOWN') {
-      return {
-        success: false,
-        code: 'RESEND_COOLDOWN',
-        retryAfterSeconds: recheck.retryAfterSeconds,
-      };
-    }
-    if (!recheck.allowed) {
-      return { success: false, code: 'RESEND_HOURLY_LIMIT' };
-    }
     return { success: true };
   }
 
-  await sendVerificationToUser(
-    {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      verificationResendAt: user.verificationResendAt,
-      verificationResendCount: user.verificationResendCount,
-      verificationResendWindowStart: user.verificationResendWindowStart,
-    },
-    locale,
-  );
+  const claim = await tryClaimResendSlot(user.id, resendState);
+
+  if (!claim.claimed) {
+    return { success: true };
+  }
+
+  try {
+    await sendVerificationToUser(
+      {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        verificationResendAt: user.verificationResendAt,
+        verificationResendCount: user.verificationResendCount,
+        verificationResendWindowStart: user.verificationResendWindowStart,
+      },
+      locale,
+    );
+  } catch (error) {
+    await rollbackResendSlot(user.id, claim.claimedState, resendState).catch(() => undefined);
+    console.error('Verification email resend failed:', error);
+  }
 
   return { success: true };
 }
