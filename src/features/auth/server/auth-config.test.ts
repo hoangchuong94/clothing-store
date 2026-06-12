@@ -1,7 +1,20 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+type CapturedAuthConfig = {
+  providers: Array<{
+    id?: string;
+    authorize?: (credentials: unknown, request: Request) => Promise<unknown>;
+  }>;
+  callbacks: {
+    jwt: (params: { token: Record<string, unknown>; user?: Record<string, unknown> }) => Promise<Record<string, unknown>>;
+    session: (params: { session: { user?: Record<string, unknown> }; token: Record<string, unknown> }) => Promise<{
+      user?: Record<string, unknown>;
+    }>;
+  };
+};
+
 const capturedAuthConfig = vi.hoisted(() => ({
-  value: undefined as any,
+  value: undefined as CapturedAuthConfig | undefined,
 }));
 
 const prismaMock = vi.hoisted(() => ({
@@ -83,15 +96,27 @@ vi.mock('../lib/rate-limit', () => rateLimitMock);
 import './auth-config';
 
 function credentialsProvider() {
+  if (!capturedAuthConfig.value) {
+    throw new Error('Auth config was not captured');
+  }
+
   const provider = capturedAuthConfig.value.providers.find(
     (candidate: { id?: string }) => candidate.id === 'credentials',
   );
 
-  if (!provider) {
+  if (!provider?.authorize) {
     throw new Error('Credentials provider was not registered');
   }
 
   return provider;
+}
+
+function authConfig() {
+  if (!capturedAuthConfig.value) {
+    throw new Error('Auth config was not captured');
+  }
+
+  return capturedAuthConfig.value;
 }
 
 function credentialsRequest() {
@@ -294,7 +319,7 @@ describe('Auth.js session status invalidation', () => {
       },
     });
 
-    const token = await capturedAuthConfig.value.callbacks.jwt({
+    const token = await authConfig().callbacks.jwt({
       token: {
         id: 'admin-1',
         role: 'ADMIN',
@@ -303,7 +328,7 @@ describe('Auth.js session status invalidation', () => {
       },
     });
 
-    const session = await capturedAuthConfig.value.callbacks.session({
+    const session = await authConfig().callbacks.session({
       session: {
         user: {},
       },
@@ -346,7 +371,7 @@ describe('Auth.js session status invalidation', () => {
       },
     });
 
-    const token = await capturedAuthConfig.value.callbacks.jwt({
+    const token = await authConfig().callbacks.jwt({
       token: {
         id: 'admin-1',
         role: 'ADMIN',
@@ -355,7 +380,7 @@ describe('Auth.js session status invalidation', () => {
       },
     });
 
-    const session = await capturedAuthConfig.value.callbacks.session({
+    const session = await authConfig().callbacks.session({
       session: {
         user: {
           id: 'admin-1',
@@ -381,7 +406,7 @@ describe('Auth.js session status invalidation', () => {
       },
     });
 
-    const token = await capturedAuthConfig.value.callbacks.jwt({
+    const token = await authConfig().callbacks.jwt({
       token: {
         id: 'user-1',
         role: 'CUSTOMER',
@@ -390,7 +415,7 @@ describe('Auth.js session status invalidation', () => {
       },
     });
 
-    const session = await capturedAuthConfig.value.callbacks.session({
+    const session = await authConfig().callbacks.session({
       session: {
         user: {
           id: 'user-1',
