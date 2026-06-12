@@ -1,164 +1,103 @@
-﻿# SECURITY_REVIEW.md — Clothing Store
+# SECURITY_REVIEW.md — Clothing Store
 
-**Loại review:** Review bảo mật toàn codebase  
-**Phương pháp:** Phân tích tĩnh source, Prisma schema, env example và docs. Không penetration test.
+**Loại review:** Review bảo mật source hiện tại sau Auth Hardening
+**Nguồn sự thật:** Source code hiện tại trong `src/` và `prisma/`
+**Cập nhật:** 2026-06-02
 
 ---
 
 ## 1. Tóm tắt
 
-Baseline bảo mật của project khá tốt cho MVP:
+Các hạng mục security hardening quan trọng đã được implement:
 
-- Password hash bằng bcrypt.
-- Email verification token được hash.
-- Token verification single-use và có expiry.
-- Credentials login yêu cầu verified email.
-- Server actions cart re-derive product price/name/stock.
-- JWT session và edge proxy đã có.
+- Login validation bằng `LoginSchema.safeParse`.
+- Shared credential verification qua `verifyCredentialsLogin()`.
+- Auth.js Credentials `authorize()` dùng chung credential verification flow.
+- Rate limiting cho login, register và resend verification.
+- PostgreSQL atomic rate limiting qua `INSERT ... ON CONFLICT ... DO UPDATE ... RETURNING`.
+- HMAC hashing cho email/IP rate-limit keys.
+- Session revocation cho `BANNED` và `INACTIVE` users.
+- Dashboard authorization cho `ADMIN` và `SUPER_ADMIN`.
+- Forbidden page có i18n.
+- Metrics API protection bằng session role.
+- Product soft delete filtering.
+- Cart ownership enforcement trong merge flow.
 
-Các gap chính:
-
-- Chưa có rate limit login/register.
-- API nội bộ metrics chưa có auth thật.
-- Proxy skip toàn bộ `/api/*`.
-- OAuth auto-verification khác policy credentials.
-- JSON cart từ DB nên được validate khi đọc.
-- JWT scopes chưa được enforce rộng rãi.
-
-Kết luận: có thể chấp nhận cho MVP nội bộ, nhưng trước production public nên xử lý tối thiểu metrics API, `/api/*` auth review và rate limit auth.
+Kết luận hiện tại: không còn HIGH finding đã biết trong auth hardening scope. Các finding còn lại là MEDIUM/LOW và được liệt kê bên dưới.
 
 ---
 
-## 2. Điểm đã làm tốt
+## 2. Implemented Controls
 
-| Kiểm soát | Ghi chú |
-|-----------|--------|
-| Password hashing | `bcrypt.hash(password, 12)` |
-| Credentials reject unverified email | `auth-config.ts` |
-| OAuth provider conditional | Chỉ bật khi có env vars |
-| Verification token random + hash | `verification/token.ts` |
-| Constant-time hash compare | `timingSafeEqual` |
-| Single-use verification token | Consume qua DB condition |
-| Resend anti-enumeration | Không reveal user missing |
-| Resend rate limit | `verification/rate-limit.ts` |
-| Cart server-authoritative | Product data lấy lại từ server |
+| Control | Source |
+|---------|--------|
+| Login server-side validation | `src/features/auth/actions/login.ts` |
+| Shared credential verification | `src/features/auth/server/credentials-login.ts` |
+| Auth.js credentials bypass fix | `src/features/auth/server/auth-config.ts` |
+| Login rate limiting | `LOGIN_IP`, `LOGIN_EMAIL` |
+| Register rate limiting | `REGISTER_IP`, `REGISTER_EMAIL` |
+| Resend verification rate limiting | `RESEND_VERIFICATION_IP`, `RESEND_VERIFICATION_EMAIL` |
+| Atomic PostgreSQL rate limit reservation | `src/features/auth/lib/rate-limit/service.ts` |
+| HMAC key hashing | `src/features/auth/lib/rate-limit/keys.ts` |
+| Session revocation | `auth-config.ts` JWT/session callbacks |
+| Metrics API protection | `src/app/api/internal/runtime/product-repository/route.ts` |
+| Product soft delete filtering | `PrismaProductRepository` public reads |
+| Cart ownership enforcement | `mergeCart({ guestCart })` + session user ID |
 
 ---
 
-## 3. Các finding
+## 3. Remaining Findings
 
-### SEC-01 — Metrics API nội bộ thiếu auth
-
-- **Severity:** High
-- **File Path:** `src/app/api/internal/runtime/product-repository/route.ts`
-- **Mô tả:** Endpoint có thể trả metrics/health nếu metrics enabled, chưa kiểm tra session hoặc secret.
-- **Khuyến nghị:** Thêm secret header hoặc session/role check; mặc định tắt production nếu chưa bảo vệ.
-
-### SEC-02 — `/api/*` bypass proxy auth
-
-- **Severity:** High
-- **File Path:** `src/proxy.ts`
-- **Mô tả:** Proxy skip API path, nên API mới không được bảo vệ tự động.
-- **Khuyến nghị:** Mỗi API route phải có auth/authorization riêng.
-
-### SEC-03 — Scopes trong JWT chưa được enforce rộng
-
-- **Severity:** High
-- **File Path:** `src/features/auth/config/roles.ts`, server actions tương lai
-- **Mô tả:** Scope được populate nhưng chưa là access-control layer thực tế.
-- **Khuyến nghị:** Khi thêm admin/server mutation, enforce scope/role ở server.
-
-### SEC-04 — OAuth auto-verifies email
+### SEC-01 — OAuth email verification semantics
 
 - **Severity:** Medium
 - **File Path:** `src/features/auth/server/auth-config.ts`
-- **Mô tả:** OAuth policy có thể set `emailVerified` khác với credentials flow.
-- **Khuyến nghị:** Document policy rõ hoặc chỉ auto-verify khi provider xác nhận email verified.
+- **Mô tả:** OAuth callback hiện có thể set `emailVerified` cho OAuth user mà chưa đọc provider verified claim một cách rõ ràng.
+- **Bằng chứng:** `signIn` callback kiểm tra `user.emailVerified` hoặc `user.isEmailVerified`; Google provider có `profile.email_verified`, GitHub provider default map không đưa verified claim vào `user`.
+- **Khuyến nghị:** Quyết định policy: chỉ auto-verify khi provider claim verified được xác nhận, hoặc document rõ OAuth trust policy hiện tại.
 
-### SEC-05 — Chưa có rate limit login/register
-
-- **Severity:** Medium
-- **File Path:** `src/features/auth/actions/login.ts`, `register.ts`
-- **Mô tả:** Brute force và registration flooding chưa được throttle ở app layer.
-- **Khuyến nghị:** Thêm rate limit theo IP + email.
-
-### SEC-06 — Login action nên dùng Zod server-side
-
-- **Severity:** Low
-- **File Path:** `src/features/auth/actions/login.ts`
-- **Mô tả:** Action nên dùng `LoginSchema.safeParse` thay vì manual truthiness check.
-- **Khuyến nghị:** Validate cùng pattern với register.
-
-### SEC-07 — Auth logs có thể chứa email
-
-- **Severity:** Low
-- **File Path:** `src/features/auth/lib/auth-logger.ts`
-- **Mô tả:** Log context có thể chứa email.
-- **Khuyến nghị:** Redact email hoặc giới hạn info logs ở development.
-
-### SEC-08 — Verification token nằm trong query string
-
-- **Severity:** Low
-- **File Path:** `src/lib/email/send.ts`
-- **Mô tả:** Token trong URL có thể nằm trong history/log/referrer.
-- **Khuyến nghị:** Chấp nhận nếu TTL ngắn và HTTPS; tránh log URL đầy đủ.
-
-### SEC-09 — Session callback nên fail closed
-
-- **Severity:** Low
-- **File Path:** `src/features/auth/server/auth-config.ts`
-- **Mô tả:** Khi DB refresh lỗi, cần đảm bảo không cấp quyền rộng hơn.
-- **Khuyến nghị:** Giữ policy fail-closed cho role/scope nhạy cảm.
-
-### SEC-10 — Dual login path tăng surface
-
-- **Severity:** Low
-- **File Path:** `src/features/auth/hooks/useLogin.ts`
-- **Mô tả:** Flow login chạy server action rồi Auth.js signIn.
-- **Khuyến nghị:** Giữ behavior đồng bộ giữa hai bước và test regression.
-
-### SEC-11 — Guest cart update server response hạn chế
-
-- **Severity:** Low
-- **File Path:** `src/features/cart/server/actions.ts`
-- **Mô tả:** Một số path guest không persist server-side nên response phải rõ ràng.
-- **Khuyến nghị:** Document behavior và giữ client rollback đúng.
-
-### SEC-12 — Merge cart schema còn nhận `userId`
+### SEC-02 — Register email enumeration
 
 - **Severity:** Medium
-- **File Path:** `src/features/cart/server/schemas.ts`
-- **Mô tả:** Server vẫn phải dùng session user ID thay vì tin `userId` từ payload.
-- **Khuyến nghị:** Bỏ field hoặc assert session-derived ID.
+- **File Path:** `src/features/auth/actions/register.ts`
+- **Mô tả:** Registration trả `EMAIL_ALREADY_EXISTS` khi email đã tồn tại, bao gồm cả P2002 unique conflict.
+- **Bằng chứng:** `existingUser` branch và P2002 branch đều map về `AUTH_ERROR_CODES.EMAIL_ALREADY_EXISTS`.
+- **Khuyến nghị:** Nếu ưu tiên anti-enumeration, chuyển sang generic success/next-step UX; nếu ưu tiên UX hiện tại, giữ và document risk.
 
-### SEC-13 — Cart actions chưa có rate limit
+### SEC-03 — Internal error disclosure
 
-- **Severity:** Medium
-- **File Path:** `src/features/cart/server/actions.ts`
-- **Mô tả:** Add/merge cart có thể bị abuse.
-- **Khuyến nghị:** Thêm rate limit khi mở public traffic lớn.
+- **Severity:** Low
+- **File Path:** `src/features/auth/actions/login.ts`, `src/features/auth/actions/register.ts`
+- **Mô tả:** Một số unexpected errors được trả về với `error.message`.
+- **Bằng chứng:** Login/register tạo `UNKNOWN_ERROR` kèm `error.message`; resend verification hiện trả generic unknown error.
+- **Khuyến nghị:** Trả generic message cho client và chỉ log chi tiết server-side.
 
-### SEC-14 — `UserServerCart.items` JSON nên validate khi đọc
+### SEC-04 — `LOGIN_IP` double reservation on browser login
 
-- **Severity:** Medium
-- **File Path:** `src/features/cart/server/db.ts`
-- **Mô tả:** JSON từ DB nên parse bằng schema trước khi dùng.
-- **Khuyến nghị:** Dùng Zod để normalize/fallback an toàn.
-
-### SEC-15 — Prisma product list chưa filter soft delete
-
-- **Severity:** Medium
-- **File Path:** `prisma-product-repository.ts`
-- **Mô tả:** `Product.deletedAt` tồn tại nhưng list path chưa filter.
-- **Khuyến nghị:** Thêm `deletedAt: null` nếu không đọc archived products.
+- **Severity:** Low
+- **File Path:** `src/features/auth/hooks/useLogin.ts`, `src/features/auth/hooks/useCredentialsAuth.ts`, `src/features/auth/server/credentials-login.ts`
+- **Mô tả:** Browser login thành công chạy `loginWithCredentials` rồi `signIn('credentials')`; cả hai path dùng shared verification, nên `LOGIN_IP` được reserve hai lần.
+- **Bằng chứng:** `useLogin` gọi `loginWithCredentials`, sau đó `authenticate`; `authenticate` gọi `signIn('credentials')`.
+- **Khuyến nghị:** Chấp nhận như tradeoff bảo vệ direct Auth.js credentials request, hoặc thiết kế preflight token nếu cần giảm false positive IP throttling.
 
 ---
 
-## 4. Ưu tiên bảo mật
+## 4. Closed Findings
 
-1. Bảo vệ metrics API.
-2. Rà soát toàn bộ `/api/*`.
-3. Thêm rate limit login/register.
-4. Validate cart JSON khi đọc DB.
-5. Chuẩn hóa OAuth verification policy.
-6. Enforce role/scope cho mutation admin tương lai.
+| Finding cũ | Trạng thái |
+|------------|------------|
+| Metrics API thiếu auth | Closed |
+| Auth.js credentials bypass rate limit | Closed |
+| Existing session survives BANNED/INACTIVE | Closed |
+| Chưa có login/register/resend rate limiting | Closed |
+| Login action thiếu `LoginSchema.safeParse` | Closed |
+| Merge cart schema nhận `userId` | Closed |
+| Prisma product reads thiếu soft-delete filter | Closed |
+
+---
+
+## 5. Notes
+
+- `/api/*` vẫn bypass proxy theo thiết kế; API route mới phải tự có auth/authorization.
+- `ROLE_SCOPES` có trong session nhưng chưa là access-control layer rộng cho future admin mutations.
+- Cart JSON validation khi đọc DB vẫn là maintainability/data-shape follow-up, không thuộc Auth Hardening completed scope.

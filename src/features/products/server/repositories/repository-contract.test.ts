@@ -4,7 +4,7 @@ import type { Product } from '@/features/products/types';
 
 const prismaMock = {
   findMany: vi.fn(),
-  findUnique: vi.fn(),
+  findFirst: vi.fn(),
 } as const;
 
 vi.mock('@/lib/server/prisma/prisma', () => ({
@@ -75,7 +75,7 @@ const sampleRow = {
 describe('product repository contract', () => {
   beforeEach(() => {
     prismaMock.findMany.mockClear();
-    prismaMock.findUnique.mockClear();
+    prismaMock.findFirst.mockClear();
   });
 
   it('returns a valid list shape for StaticProductRepository and PrismaProductRepository', async () => {
@@ -98,7 +98,7 @@ describe('product repository contract', () => {
   });
 
   it('returns the same shaped product from getById() for both repositories', async () => {
-    prismaMock.findUnique.mockResolvedValue(sampleRow);
+    prismaMock.findFirst.mockResolvedValue(sampleRow);
 
     const { PrismaProductRepository } = await import('./prisma-product-repository');
     const staticRepo = new StaticProductRepository();

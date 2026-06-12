@@ -80,13 +80,17 @@ Các file sau có thể còn ảnh hưởng đến một số kết luận nếu
 Các finding sau có bằng chứng trực tiếp tương đối mạnh:
 
 - `/api/*` bypass proxy auth.
-- Metrics API nội bộ chưa có auth check thực sự.
+- Metrics API nội bộ đã có session/role auth check trong source hiện tại.
 - `/cart` nằm trong protected routes nhưng không có page.
 - Product ID app layer là slug.
 - `AUTO` repository fallback chỉ ở init.
 - Guest cart không lưu server-side.
 - Auth verification token được hash và consume single-use.
+- Auth rate limiting login/register/resend đã được implement.
+- Existing sessions của `BANNED`/`INACTIVE` user bị invalidated qua full server `auth()`.
 - Product filtering hiện chạy sau full-list read.
+- Prisma product public reads filter `deletedAt: null`.
+- Merge cart ownership lấy từ session, không từ client `userId`.
 - Một số docs/scripts từng bị lệch source.
 
 ---

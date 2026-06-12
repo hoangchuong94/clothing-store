@@ -2,7 +2,7 @@
 
 Hướng dẫn cho AI coding agent làm việc trong repository này. Đọc file này trước khi thay đổi code.
 
-**Tài liệu liên quan:** [PROJECT_CONTEXT.md](./PROJECT_CONTEXT.md), [AI_RULES.md](./AI_RULES.md), [README.md](./README.md), [docs/planning/PROJECT_ANALYSIS.md](./docs/planning/PROJECT_ANALYSIS.md), [docs/reviews/REVIEW_RULES.md](./docs/reviews/REVIEW_RULES.md).
+**Tài liệu liên quan:** [docs/INDEX.md](./docs/INDEX.md) (đọc theo mục tiêu), [PROJECT_CONTEXT.md](./PROJECT_CONTEXT.md), [AI_RULES.md](./AI_RULES.md), [docs/planning/OPEN_ISSUES.md](./docs/planning/OPEN_ISSUES.md), [docs/reviews/REVIEW_RULES.md](./docs/reviews/REVIEW_RULES.md).
 
 ---
 
@@ -18,9 +18,9 @@ Hướng dẫn cho AI coding agent làm việc trong repository này. Đọc fil
 | Cart | Đã implement; guest dùng Redux/localStorage, user đăng nhập dùng `UserServerCart`; chưa có `/cart` page |
 | Admin dashboard | Một phần; có `(admin)/layout` và placeholder `dashboard/page.tsx` |
 | Checkout, orders UI, inventory locking | Schema có, nhưng chưa build trong `src/app` |
-| Product repository metrics | Đã implement |
+| Product repository metrics | Đã implement và protected bằng session role |
 | Global/API rate limiting | Chưa implement |
-| Rate limit resend verification email | Đã implement |
+| Auth rate limiting login/register/resend | Đã implement qua `AuthRateLimitBucket` |
 
 ---
 
@@ -101,17 +101,17 @@ Page hiện tồn tại:
 | Route group | Paths |
 |-------------|-------|
 | `(home)` | `/`, `/products` |
-| `(auth)` | `/signin`, `/signup`, `/verify-email`, `/verify-email/confirm`, `/verify-email/success`, `/verify-email/error` |
+| `(auth)` | `/signin`, `/signup`, `/verify-email`, `/verify-email/confirm`, `/verify-email/success`, `/verify-email/error`, `/forbidden` |
 | `(admin)` | `/dashboard` |
 
-Chưa có page cho `/cart`, `/account`, `/admin/*` CRUD, `/terms`, `/privacy`, `/forgot-password`, `/error`, `/forbidden`, checkout hoặc orders.
+Chưa có page cho `/cart`, `/account`, `/admin/*` CRUD, `/terms`, `/privacy`, `/forgot-password`, `/error`, checkout hoặc orders.
 
 API route hiện có:
 
 | Path | Vai trò |
 |------|--------|
 | `/api/auth/[...nextauth]` | Auth.js handlers |
-| `/api/internal/runtime/product-repository` | Metrics/health của product repository |
+| `/api/internal/runtime/product-repository` | Metrics/health của product repository; yêu cầu session `ADMIN` hoặc `SUPER_ADMIN` |
 
 `src/proxy.ts` bỏ qua `/api/*`, nên API route mới phải tự kiểm tra auth nếu cần.
 
@@ -166,6 +166,21 @@ Server actions:
 
 Credentials login là flow hai bước: server action validate/check trước, sau đó client gọi `signIn('credentials', { redirect: false })` để thiết lập JWT session.
 
+Credential verification hiện là shared flow trong `src/features/auth/server/credentials-login.ts`:
+
+1. Validate bằng `LoginSchema.safeParse` ở caller.
+2. Reserve `LOGIN_IP`.
+3. Reserve `LOGIN_EMAIL`.
+4. Prisma user lookup.
+5. `bcrypt.compare`.
+6. Success reset `LOGIN_EMAIL`; không reset `LOGIN_IP`.
+
+Auth.js Credentials `authorize()` cũng dùng shared flow này, nên direct `/api/auth/[...nextauth]` credentials requests không bypass rate limit.
+
+Register dùng `REGISTER_IP` rồi `REGISTER_EMAIL` trước user lookup/create. Resend verification dùng `RESEND_VERIFICATION_IP` rồi `RESEND_VERIFICATION_EMAIL` trước user lookup/send. Rate-limit keys là HMAC hashes trong `AuthRateLimitBucket`.
+
+Full server `auth()` re-check `User.status` trong JWT callback. Existing sessions của `BANNED` hoặc `INACTIVE` user bị invalidated.
+
 Email verification dùng token hash trong `EmailVerificationToken`; confirm page không verify ngay khi GET mà verify sau hành động của người dùng.
 
 ### `products`
@@ -175,7 +190,7 @@ Email verification dùng token hash trong `EmailVerificationToken`; confirm page
 - Static catalog: `src/features/products/server/facades/product-source.ts`.
 - Featured/new arrivals: ID list trong `src/features/products/data/ui.ts`.
 - App-level `Product.id` là slug `prod-00x`.
-- `PrismaProductRepository.list()` hiện chưa filter `Product.deletedAt`.
+- `PrismaProductRepository` public reads filter `Product.deletedAt: null`.
 
 ### `cart`
 
@@ -187,6 +202,7 @@ Cart chỉ có drawer, chưa có dedicated `/cart` page.
 | Authenticated | Có | `UserServerCart` JSON | Persist add/update/remove/merge |
 
 Không nhầm Prisma model `CartItem` với `UserServerCart.items`; runtime hiện dùng JSON cart.
+`mergeCart` chỉ nhận `{ guestCart }`; server lấy user ownership từ authenticated session.
 
 ### `home`
 
@@ -225,7 +241,7 @@ Factory: `src/features/products/server/repositories/create-product-repository.ts
 
 `AUTO` fallback chỉ áp dụng khi construct repository, không áp dụng cho lỗi query từng request.
 
-Metrics bật khi `REPO_METRICS_ENABLED === 'true'` hoặc `NODE_ENV !== 'production'`. Endpoint metrics trả 403 khi metrics disabled.
+Metrics bật khi `REPO_METRICS_ENABLED === 'true'` hoặc `NODE_ENV !== 'production'`. Endpoint metrics yêu cầu session `ADMIN` hoặc `SUPER_ADMIN` trước khi trả report; vẫn trả 403 khi metrics disabled.
 
 ---
 
@@ -239,6 +255,7 @@ Metrics bật khi `REPO_METRICS_ENABLED === 'true'` hoặc `NODE_ENV !== 'produc
 Model đang được app dùng thực tế:
 
 - Auth: `User`, `Account`, `Session`, `EmailVerificationToken`, `Role`
+- Auth rate limit: `AuthRateLimitBucket`, `AuthRateLimitAction`
 - Catalog: `Product`, `Category`, `ProductVariant`, `Inventory`, ...
 - Cart persistence: `UserServerCart`
 
@@ -361,6 +378,8 @@ Vitest dùng Node environment. Test hiện có cho auth schemas, cart merge logi
 | Concern | File |
 |---------|------|
 | Auth config | `src/features/auth/server/auth-config.ts` |
+| Shared credentials verification | `src/features/auth/server/credentials-login.ts` |
+| Auth rate limit | `src/features/auth/lib/rate-limit/*` |
 | Edge auth | `src/features/auth/server/auth-edge.ts` |
 | Session helper | `src/features/auth/server/session.ts` |
 | Route lists | `src/features/auth/config/access.ts` |

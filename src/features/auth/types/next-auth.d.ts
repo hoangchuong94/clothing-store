@@ -28,5 +28,6 @@ declare module 'next-auth/jwt' {
     role?: RoleCode;
     scopes?: readonly Scope[];
     isEmailVerified?: boolean;
+    isUserActive?: boolean;
   }
 }

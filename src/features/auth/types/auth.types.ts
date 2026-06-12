@@ -18,6 +18,7 @@ export const AUTH_ERROR_CODES = {
   EMAIL_NOT_VERIFIED: 'error.emailNotVerified',
   VERIFICATION_RESEND_COOLDOWN: 'error.verificationResendCooldown',
   VERIFICATION_RESEND_LIMIT: 'error.verificationResendLimit',
+  RATE_LIMIT_EXCEEDED: 'error.rateLimitExceeded',
   ACCOUNT_NOT_LINKED: 'error.accountNotLinked',
   OAUTH_ERROR: 'error.oauthError',
   INVALID_FIELDS: 'error.invalidFields',

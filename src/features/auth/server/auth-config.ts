@@ -3,11 +3,26 @@ import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import GitHub from 'next-auth/providers/github';
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import bcrypt from 'bcryptjs';
 import prisma from '@/lib/server/prisma/prisma';
 import { ROLE_SCOPES } from '../config/roles';
 import { isEmailVerified } from '../lib/verification/status';
 import { authEdgeConfig } from './auth-edge.config';
+import { LoginSchema } from '../schemas/auth-schemas';
+import { verifyCredentialsLogin } from './credentials-login';
+
+function invalidateAuthToken(token: {
+  id?: unknown;
+  role?: unknown;
+  scopes?: unknown;
+  isEmailVerified?: unknown;
+  isUserActive?: boolean;
+}) {
+  delete token.id;
+  delete token.role;
+  delete token.scopes;
+  token.isEmailVerified = false;
+  token.isUserActive = false;
+}
 
 const authProviders = [
   ...(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET
@@ -35,34 +50,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authProviders,
     Credentials({
       name: 'credentials',
-      async authorize(credentials) {
-        if (
-          !credentials ||
-          typeof credentials.email !== 'string' ||
-          typeof credentials.password !== 'string'
-        ) {
+      async authorize(credentials, request) {
+        const parsed = LoginSchema.safeParse(credentials);
+        if (!parsed.success) {
           return null;
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-          include: { role: true },
-        });
+        const result = await verifyCredentialsLogin(parsed.data, request.headers);
+        if (result.status !== 'SUCCESS') return null;
 
-        if (!user || !user.password || !user.role || user.status !== 'ACTIVE') return null;
-
-        const valid = await bcrypt.compare(credentials.password, user.password);
-        if (!valid) return null;
-        if (!isEmailVerified(user.emailVerified)) return null;
-
-        const roleName = user.role.name;
-        const scopes = ROLE_SCOPES[user.role.name] ?? [];
+        const roleName = result.user.role.name;
+        const scopes = ROLE_SCOPES[roleName] ?? [];
 
         return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.image,
+          id: result.user.id,
+          email: result.user.email,
+          name: result.user.name,
+          image: result.user.image,
           role: roleName,
           scopes: [...scopes],
           isEmailVerified: true,
@@ -84,24 +88,41 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.isEmailVerified = user.isEmailVerified ?? oauthVerified;
       }
 
-      if (token.id && (trigger === 'update' || token.isEmailVerified === undefined || !token.role)) {
+      if (token.id) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
-          include: { role: true },
+          select: {
+            status: true,
+            emailVerified: true,
+            role: {
+              select: {
+                name: true,
+              },
+            },
+          },
         });
 
-        if (dbUser?.role) {
-          const scopes = ROLE_SCOPES[dbUser.role.name] ?? [];
-          token.role = dbUser.role.name;
-          token.scopes = [...scopes];
-          token.isEmailVerified = isEmailVerified(dbUser.emailVerified);
+        if (!dbUser?.role || dbUser.status !== 'ACTIVE') {
+          invalidateAuthToken(token);
+          return token;
         }
+
+        const scopes = ROLE_SCOPES[dbUser.role.name] ?? [];
+        token.role = dbUser.role.name;
+        token.scopes = [...scopes];
+        token.isEmailVerified = isEmailVerified(dbUser.emailVerified);
+        token.isUserActive = true;
       }
 
       return token;
     },
     async session({ session, token }) {
-      if (session.user && token.id && token.role && token.scopes) {
+      if (token.isUserActive === false || !token.id || !token.role || !token.scopes) {
+        delete (session as { user?: unknown }).user;
+        return session;
+      }
+
+      if (session.user) {
         session.user.id = token.id;
         session.user.role = token.role;
         session.user.scopes = [...token.scopes];

@@ -57,7 +57,6 @@ export interface RemoveCartItemPayload {
 
 export interface MergeCartPayload {
   guestCart: CartItem[];
-  userId: string;
 }
 
 export interface CartTotals {

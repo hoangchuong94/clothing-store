@@ -48,9 +48,9 @@ Dùng alias `@/*` cho path trong `src/*`. Chỉ dùng feature barrel cho public 
 - Page người dùng phải nằm dưới `src/app/[locale]/...`; không thêm route public không có locale.
 - Route groups hiện có:
   - `(home)`: `/`, `/products`
-  - `(auth)`: `/signin`, `/signup`, `/verify-email`, `/verify-email/confirm`, `/verify-email/success`, `/verify-email/error`
+  - `(auth)`: `/signin`, `/signup`, `/verify-email`, `/verify-email/confirm`, `/verify-email/success`, `/verify-email/error`, `/forbidden`
   - `(admin)`: `/dashboard`
-- Hiện chưa có `/cart` page, checkout page, account page, legal page, `/forbidden` page hoặc admin CRUD page.
+- Hiện chưa có `/cart` page, checkout page, account page, legal page, `/forgot-password`, `/error` page hoặc admin CRUD page.
 - `src/proxy.ts` là edge entrypoint cho i18n và auth redirect. Không có `middleware.ts`.
 - `src/proxy.ts` bỏ qua mọi `/api/*`; API route phải tự thiết kế auth/authorization nếu không public.
 - `/dashboard` đang được guard trong `src/app/[locale]/(admin)/layout.tsx` với role `ADMIN` hoặc `SUPER_ADMIN`.
@@ -103,18 +103,31 @@ Với cart actions, phải giữ nguyên tính chất server-authoritative: clie
   - Edge-safe JWT config: `src/features/auth/server/auth-edge.config.ts`
   - Proxy wrapper: `src/features/auth/server/auth-edge.ts`
 - Credentials login yêu cầu user active, có password, có role và email đã verified.
+- Credentials verification đi qua `verifyCredentialsLogin()` và được dùng bởi cả `loginWithCredentials` lẫn Auth.js Credentials `authorize()`.
+- `loginWithCredentials` nhận `unknown` và validate bằng `LoginSchema.safeParse`.
+- Auth rate limiting đã có cho login, register và resend verification:
+  - Login: `LOGIN_IP` rồi `LOGIN_EMAIL` trước Prisma/bcrypt.
+  - Register: `REGISTER_IP` rồi `REGISTER_EMAIL` trước user lookup/create.
+  - Resend verification: `RESEND_VERIFICATION_IP` rồi `RESEND_VERIFICATION_EMAIL` trước user lookup/send.
+- Rate-limit keys dùng HMAC hash cho email/IP; database lưu `keyHash`, không lưu raw email/IP.
+- Rate limiting dùng PostgreSQL atomic `INSERT ... ON CONFLICT ("action", "keyHash") DO UPDATE ... RETURNING`.
+- Login success reset `LOGIN_EMAIL`; không reset `LOGIN_IP`.
+- Password đúng nhưng email chưa verified sẽ compensate `LOGIN_EMAIL`.
+- Full server `auth()` re-check database `User.status`; existing sessions của `BANNED` và `INACTIVE` user bị invalidated.
 - OAuth providers chỉ bật khi có env vars tương ứng. Hành vi hiện tại có thể auto-set `emailVerified` cho OAuth user; coi đây là policy hiện có trừ khi được yêu cầu đổi.
 - Registration và verification phải dùng hashed verification token. Không lưu/log token plain text.
 - Confirm page không được verify khi GET; verification phải chạy sau hành động xác nhận của người dùng.
-- Giữ resend rate limiting qua `verification/rate-limit.ts` và các field `User.verificationResend*`.
+- Resend verification rate limit chính dùng `AuthRateLimitBucket`; cooldown 2 phút vẫn dùng `User.verificationResendAt`.
 - Admin/server mutation tương lai phải check role/scope ở server, không chỉ ẩn UI.
 - Không expose `AUTH_SECRET`, `DATABASE_URL`, SMTP credentials, password hash, verification token đầy đủ hoặc raw session/JWT token ra client hoặc logs.
 
 Hardening gaps đang tồn tại:
 
-- Chưa có rate limit cho login/register.
-- `ROLE_SCOPES` được đưa vào session nhưng chưa được enforce rộng rãi trong server actions.
-- `/api/internal/runtime/product-repository` chưa có auth check ngoài việc bật/tắt metrics.
+- OAuth email verification semantics: callback hiện chưa đọc provider verified claim một cách rõ ràng.
+- Register email enumeration: `registerUser` trả `EMAIL_ALREADY_EXISTS`.
+- Login/register unexpected errors có thể đưa `error.message` vào response.
+- Browser credentials login thành công reserve `LOGIN_IP` hai lần vì flow chạy server action rồi Auth.js `signIn`.
+- `ROLE_SCOPES` được đưa vào session nhưng chưa được enforce rộng rãi trong server actions ngoài các guard hiện có.
 - `/api/*` bypass proxy auth, nên API mới phải tự thiết kế bảo mật.
 
 ---
@@ -136,7 +149,7 @@ Hardening gaps đang tồn tại:
   - `AUTO`: thử Prisma khi construct repository, fallback static chỉ khi construct lỗi
 - Không thêm fallback Prisma theo từng request trong app code nếu chưa cố ý đổi repository contract.
 - Nếu thêm admin product writes, phải thêm cache invalidation và tests.
-- Nếu sửa `PrismaProductRepository`, lưu ý `Product.deletedAt`; list path hiện chưa filter soft-deleted rows.
+- `PrismaProductRepository` public reads hiện filter `deletedAt: null`; giữ behavior này trừ khi có admin archived-product use case rõ ràng.
 
 Performance rule: tránh đọc full catalog lặp lại. Nếu page cần cả products và filter metadata, ưu tiên một lần `getAllProducts()` mỗi request hoặc thêm request-level caching bằng React `cache()`.
 
@@ -150,6 +163,7 @@ Performance rule: tránh đọc full catalog lặp lại. Nếu page cần cả 
 - `CartItem` model trong Prisma hiện chưa dùng runtime; đừng nhầm với `UserServerCart.items`.
 - Cart server actions không được tin price/name/stock từ client.
 - `mergeCart` phải dùng user ID từ session server-side.
+- `MergeCartSchema` chỉ nhận `{ guestCart }`; không yêu cầu `userId` từ client.
 
 ---
 
@@ -198,7 +212,7 @@ Performance rule: tránh đọc full catalog lặp lại. Nếu page cần cả 
 ## API Routes
 
 - `/api/auth/[...nextauth]` là Auth.js handler.
-- `/api/internal/runtime/product-repository` là metrics endpoint nội bộ, hiện có hardening gap.
+- `/api/internal/runtime/product-repository` là metrics endpoint nội bộ, yêu cầu session và role `ADMIN` hoặc `SUPER_ADMIN`.
 - API route mới phải tự kiểm tra auth/authorization vì proxy bỏ qua `/api/*`.
 - Validate query/body bằng Zod hoặc parser tương đương.
 - Không return secret, token, stack trace hoặc dữ liệu nội bộ không cần thiết.

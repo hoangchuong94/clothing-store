@@ -26,7 +26,7 @@ vi.mock('@/lib/server/prisma/prisma', () => ({
 
 vi.mock('@/lib/email/send', () => emailMock);
 
-import { resendVerificationByEmail } from './service';
+import { createAndSendVerification, resendVerificationByEmail } from './service';
 
 function unverifiedUser(overrides: Record<string, unknown> = {}) {
   return {
@@ -79,6 +79,20 @@ describe('email verification service', () => {
     expect(prismaMock.user.updateMany).not.toHaveBeenCalled();
   });
 
+  it('returns generic success when the account is already verified', async () => {
+    prismaMock.user.findUnique.mockResolvedValue(
+      unverifiedUser({
+        emailVerified: new Date('2026-06-02T00:00:00.000Z'),
+      }),
+    );
+
+    const result = await resendVerificationByEmail('user@example.com', 'en');
+
+    expect(result).toEqual({ success: true });
+    expect(emailMock.sendVerificationEmail).not.toHaveBeenCalled();
+    expect(prismaMock.user.updateMany).not.toHaveBeenCalled();
+  });
+
   it('sends a new verification email for an unverified credentials user', async () => {
     prismaMock.user.findUnique.mockResolvedValue(unverifiedUser());
 
@@ -90,6 +104,15 @@ describe('email verification service', () => {
       select: expect.any(Object),
     });
     expect(prismaMock.user.updateMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.user.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: 'user-1',
+        verificationResendAt: null,
+      },
+      data: {
+        verificationResendAt: expect.any(Date),
+      },
+    });
     expect(prismaMock.emailVerificationToken.create).toHaveBeenCalledOnce();
     expect(prismaMock.emailVerificationToken.updateMany).not.toHaveBeenCalled();
     expect(emailMock.sendVerificationEmail).toHaveBeenCalledOnce();
@@ -112,5 +135,31 @@ describe('email verification service', () => {
         usedAt: expect.any(Date),
       },
     });
+  });
+
+  it('preserves retryAfter for user-scoped cooldown checks', async () => {
+    const now = new Date('2026-06-02T00:00:00.000Z');
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    prismaMock.user.findUnique.mockResolvedValue(
+      unverifiedUser({
+        verificationResendAt: now,
+      }),
+    );
+
+    try {
+      const result = await createAndSendVerification('user-1', 'en');
+
+      expect(result).toEqual({
+        sent: false,
+        rateLimited: true,
+        retryAfterSeconds: 120,
+      });
+      expect(emailMock.sendVerificationEmail).not.toHaveBeenCalled();
+      expect(prismaMock.user.updateMany).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

@@ -97,7 +97,6 @@ export const MergeCartSchema = z.object({
       variantId: z.string().optional(),
     }),
   ),
-  userId: z.string().min(1, 'User ID is required'),
 });
 
 export type MergeCartInput = z.infer<typeof MergeCartSchema>;

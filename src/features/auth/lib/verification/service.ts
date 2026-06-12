@@ -4,7 +4,7 @@ import { buildVerificationUrl, sendVerificationEmail } from '@/lib/email/send';
 import prisma from '@/lib/server/prisma/prisma';
 
 import { verificationConfig } from './config';
-import { checkResendRateLimit, nextResendState } from './rate-limit';
+import { checkResendCooldown, nextResendCooldownState } from './rate-limit';
 import {
   generateVerificationToken,
   getVerificationExpiryDate,
@@ -19,8 +19,6 @@ type TransactionClient = Prisma.TransactionClient;
 
 type ResendState = {
   verificationResendAt: Date | null;
-  verificationResendCount: number;
-  verificationResendWindowStart: Date | null;
 };
 
 type UserForResend = {
@@ -31,7 +29,7 @@ type UserForResend = {
 
 type ClaimedResendSlot = Pick<
   ResendState,
-  'verificationResendAt' | 'verificationResendCount' | 'verificationResendWindowStart'
+  'verificationResendAt'
 >;
 
 async function invalidateVerificationTokenById(
@@ -86,13 +84,11 @@ async function tryClaimResendSlot(
   userId: string,
   previousState: ResendState,
 ): Promise<{ claimed: true; claimedState: ClaimedResendSlot } | { claimed: false }> {
-  const resendState = nextResendState(previousState);
+  const resendState = nextResendCooldownState();
   const updated = await prisma.user.updateMany({
     where: {
       id: userId,
       verificationResendAt: previousState.verificationResendAt,
-      verificationResendCount: previousState.verificationResendCount,
-      verificationResendWindowStart: previousState.verificationResendWindowStart,
     },
     data: resendState,
   });
@@ -111,8 +107,6 @@ async function rollbackResendSlot(
     where: {
       id: userId,
       verificationResendAt: claimedState.verificationResendAt,
-      verificationResendCount: claimedState.verificationResendCount,
-      verificationResendWindowStart: claimedState.verificationResendWindowStart,
     },
     data: previousState,
   });
@@ -151,8 +145,6 @@ export async function createAndSendVerification(
       name: true,
       emailVerified: true,
       verificationResendAt: true,
-      verificationResendCount: true,
-      verificationResendWindowStart: true,
     },
   });
 
@@ -166,33 +158,28 @@ export async function createAndSendVerification(
     email,
     name: user.name,
     verificationResendAt: user.verificationResendAt,
-    verificationResendCount: user.verificationResendCount,
-    verificationResendWindowStart: user.verificationResendWindowStart,
   };
 
   const resendState = {
     verificationResendAt: user.verificationResendAt,
-    verificationResendCount: user.verificationResendCount,
-    verificationResendWindowStart: user.verificationResendWindowStart,
   };
 
   if (options?.skipRateLimit) {
     await sendVerificationToUser(resendUser, locale);
     await prisma.user.update({
       where: { id: user.id },
-      data: nextResendState(resendState),
+      data: nextResendCooldownState(),
     });
     return { sent: true };
   }
 
-  const limit = checkResendRateLimit(resendState);
+  const limit = checkResendCooldown(resendState);
 
   if (!limit.allowed) {
     return {
       sent: false,
       rateLimited: true,
-      retryAfterSeconds:
-        limit.reason === 'COOLDOWN' ? limit.retryAfterSeconds : undefined,
+      retryAfterSeconds: limit.retryAfterSeconds,
     };
   }
 
@@ -318,8 +305,6 @@ export async function resendVerificationByEmail(
       emailVerified: true,
       password: true,
       verificationResendAt: true,
-      verificationResendCount: true,
-      verificationResendWindowStart: true,
     },
   });
 
@@ -333,11 +318,9 @@ export async function resendVerificationByEmail(
 
   const resendState = {
     verificationResendAt: user.verificationResendAt,
-    verificationResendCount: user.verificationResendCount,
-    verificationResendWindowStart: user.verificationResendWindowStart,
   };
 
-  const limit = checkResendRateLimit(resendState);
+  const limit = checkResendCooldown(resendState);
 
   if (!limit.allowed) {
     return { success: true };
@@ -356,8 +339,6 @@ export async function resendVerificationByEmail(
         email: user.email,
         name: user.name,
         verificationResendAt: user.verificationResendAt,
-        verificationResendCount: user.verificationResendCount,
-        verificationResendWindowStart: user.verificationResendWindowStart,
       },
       locale,
     );

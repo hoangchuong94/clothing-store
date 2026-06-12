@@ -100,11 +100,14 @@ docker run -p 3000:3000 clothing-store
 ## Tính năng
 
 - Đa ngôn ngữ Anh/Việt.
-- Form xác thực người dùng.
+- Form xác thực người dùng, email verification và Auth.js session.
+- Auth rate limiting cho login/register/resend verification.
+- Session revocation cho user `BANNED` hoặc `INACTIVE`.
 - Giao diện responsive với Tailwind CSS.
 - Chuyển đổi dark/light mode.
 - Animation bằng Framer Motion.
 - Catalog sản phẩm và cart drawer.
+- Metrics API nội bộ được bảo vệ bằng session role `ADMIN` hoặc `SUPER_ADMIN`.
 
 ## Công nghệ
 

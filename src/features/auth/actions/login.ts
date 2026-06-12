@@ -1,58 +1,55 @@
 'use server';
 
-import bcrypt from 'bcryptjs';
+import { headers } from 'next/headers';
 import { LoginSchema } from '../schemas/auth-schemas';
 import type { AuthResponse } from '../types/auth.types';
 import { AuthErrorHandler } from '../lib/auth-errors';
 import { AUTH_ERROR_CODES } from '../types/auth.types';
 import { getRedirectUrlForRole } from '../lib/callback-url';
-import prisma from '@/lib/server/prisma/prisma';
-import { isEmailVerified } from '../lib/verification/status';
 import { APP_ROUTES } from '../config/app-routes';
+import { verifyCredentialsLogin } from '../server/credentials-login';
+
+function createRateLimitError() {
+  return AuthErrorHandler.createError(AUTH_ERROR_CODES.RATE_LIMIT_EXCEEDED);
+}
 
 export async function loginWithCredentials(
-  credentials: LoginSchema,
+  credentials: unknown,
 ): Promise<AuthResponse<{ redirectUrl?: string }>> {
   try {
-    // Validate input
-    if (!credentials.email || !credentials.password) {
+    const validatedFields = LoginSchema.safeParse(credentials);
+
+    if (!validatedFields.success) {
       return {
         success: false,
         error: AuthErrorHandler.createError(AUTH_ERROR_CODES.INVALID_FIELDS),
       };
     }
 
-    // Find user in database
-    const user = await prisma.user.findUnique({
-      where: { email: credentials.email },
-      include: {
-        role: true,
-      },
-    });
+    const { email, password } = validatedFields.data;
+    const requestHeaders = await headers();
+    const result = await verifyCredentialsLogin({ email, password }, requestHeaders);
 
-    // Check if user exists and is active
-    if (!user || !user.password || !user.role || user.status !== 'ACTIVE') {
+    if (result.status === 'RATE_LIMIT_EXCEEDED') {
+      return {
+        success: false,
+        error: createRateLimitError(),
+      };
+    }
+
+    if (result.status === 'INVALID_CREDENTIALS') {
       return {
         success: false,
         error: AuthErrorHandler.createError(AUTH_ERROR_CODES.INVALID_CREDENTIALS),
       };
     }
 
-    // Verify password
-    const valid = await bcrypt.compare(credentials.password, user.password);
-    if (!valid) {
-      return {
-        success: false,
-        error: AuthErrorHandler.createError(AUTH_ERROR_CODES.INVALID_CREDENTIALS),
-      };
-    }
-
-    if (!isEmailVerified(user.emailVerified)) {
+    if (result.status === 'EMAIL_NOT_VERIFIED') {
       return {
         success: false,
         error: AuthErrorHandler.createError(AUTH_ERROR_CODES.EMAIL_NOT_VERIFIED),
         data: {
-          redirectUrl: `${APP_ROUTES.AUTH.VERIFY_EMAIL}?email=${encodeURIComponent(user.email ?? credentials.email)}`,
+          redirectUrl: `${APP_ROUTES.AUTH.VERIFY_EMAIL}?email=${encodeURIComponent(result.email)}`,
         },
       };
     }
@@ -60,7 +57,7 @@ export async function loginWithCredentials(
     return {
       success: true,
       data: {
-        redirectUrl: getRedirectUrlForRole(user.role.name),
+        redirectUrl: getRedirectUrlForRole(result.user.role.name),
       },
     };
   } catch (error) {

@@ -90,6 +90,9 @@ export class PrismaProductRepository implements ProductRepository {
   async list(): Promise<AppProduct[]> {
     try {
       const rows = await prisma.product.findMany({
+        where: {
+          deletedAt: null,
+        },
         include: productInclude,
       });
       try {
@@ -110,13 +113,19 @@ export class PrismaProductRepository implements ProductRepository {
 
   async getById(productId: string): Promise<AppProduct | null> {
     try {
-      let p = await prisma.product.findUnique({
-        where: { slug: productId },
+      let p = await prisma.product.findFirst({
+        where: {
+          slug: productId,
+          deletedAt: null,
+        },
         include: productInclude,
       });
       if (!p) {
-        p = await prisma.product.findUnique({
-          where: { id: productId },
+        p = await prisma.product.findFirst({
+          where: {
+            id: productId,
+            deletedAt: null,
+          },
           include: productInclude,
         });
       }
@@ -145,6 +154,7 @@ export class PrismaProductRepository implements ProductRepository {
     try {
       const rows = await prisma.product.findMany({
         where: {
+          deletedAt: null,
           OR: [{ id: { in: uniqueIds } }, { slug: { in: uniqueIds } }],
         },
         include: productInclude,

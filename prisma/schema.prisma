@@ -26,6 +26,15 @@ enum UserRole {
   CUSTOMER
 }
 
+enum AuthRateLimitAction {
+  LOGIN_EMAIL
+  LOGIN_IP
+  REGISTER_EMAIL
+  REGISTER_IP
+  RESEND_VERIFICATION_EMAIL
+  RESEND_VERIFICATION_IP
+}
+
 enum ProductStatus {
   DRAFT
   ACTIVE
@@ -543,6 +552,25 @@ model UserServerCart {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_server_carts")
+}
+
+model AuthRateLimitBucket {
+  id            String              @id @default(cuid())
+  action        AuthRateLimitAction
+  keyHash       String
+  windowStart   DateTime
+  windowExpires DateTime
+  count         Int                 @default(0)
+  blockedUntil  DateTime?
+  lastAttemptAt DateTime?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@unique([action, keyHash])
+  @@index([action, windowExpires])
+  @@index([blockedUntil])
+  @@index([updatedAt])
+  @@map("auth_rate_limit_buckets")
 }
 
 model Review {

@@ -24,5 +24,15 @@ Không construct repository trực tiếp trong UI hoặc page nếu không cầ
 ## Lưu ý hiện tại
 
 - Filter đang chạy sau khi đã đọc full list.
-- `PrismaProductRepository.list()` chưa filter `Product.deletedAt`.
+- Public reads trong `PrismaProductRepository` filter `Product.deletedAt: null` cho list, get by id/slug và get by ids.
 - Featured/new arrivals dùng danh sách ID trong `src/features/products/data/ui.ts`.
+
+## Soft delete
+
+`Product.deletedAt` là field soft delete. Luồng public catalog hiện không trả sản phẩm soft-deleted:
+
+- `list()` thêm `where: { deletedAt: null }`.
+- `getById()` lookup slug hoặc cuid đều kèm `deletedAt: null`.
+- `getByIds()` thêm `deletedAt: null` cùng `OR` theo id/slug.
+
+Nếu sau này admin cần xem archived products, cần thiết kế explicit admin path thay vì bỏ filter mặc định khỏi public repository.

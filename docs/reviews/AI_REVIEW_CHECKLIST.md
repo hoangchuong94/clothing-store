@@ -63,9 +63,12 @@ Nguồn đối chiếu chính:
 - API route mới tự kiểm tra authorization vì proxy skip `/api/*`.
 - Internal/debug API không chỉ dựa vào flag bật/tắt nếu chạy production.
 - Credentials auth vẫn yêu cầu active user, password, role và verified email.
+- Credentials auth vẫn dùng shared `verifyCredentialsLogin()` trong cả login server action và Auth.js Credentials provider.
+- Auth rate limiting vẫn reserve IP trước email trước khi chạm Prisma/bcrypt hoặc user lookup.
+- Existing JWT sessions của `BANNED`/`INACTIVE` user vẫn bị invalidated qua full server `auth()`.
 - Registration vẫn hash password bằng bcrypt và validate schema.
 - Verification token vẫn hashed, expiry-bound và single-use.
-- Resend verification vẫn giữ rate limit.
+- Resend verification vẫn giữ AuthRateLimitBucket rate limit và cooldown.
 - Callback/redirect vẫn chặn open redirect.
 - Không log hoặc expose password, password hash, `AUTH_SECRET`, `DATABASE_URL`, SMTP password, verification token đầy đủ hoặc raw JWT/session token.
 - Admin/server mutation kiểm tra role/scope ở server.
@@ -103,6 +106,7 @@ Nguồn đối chiếu chính:
 - Multi-step write cần atomicity dùng `prisma.$transaction`.
 - Query theo user scope bằng user ID từ session.
 - Soft-deletable models filter `deletedAt` khi cần.
+- Product public reads trong Prisma repository filter `deletedAt: null`.
 - Prisma `Decimal` được convert có chủ đích.
 - Schema change có migration và update code/tests.
 - Không coi schema-only domain là feature runtime.
@@ -126,6 +130,7 @@ Nguồn đối chiếu chính:
 - Guest cart chỉ localStorage/Redux.
 - Auth cart persist vào `UserServerCart`.
 - `mergeCart` dùng session user ID.
+- `MergeCartSchema` không yêu cầu client `userId`.
 - Server re-derive product data.
 - Không nhầm `CartItem` model với runtime JSON cart.
 - Nếu đổi merge/update/remove, có tests cho conflict, stock và rollback.

@@ -5,7 +5,7 @@ import type { Product } from '@/features/products/types';
 
 const prismaMock = {
   findMany: vi.fn(),
-  findUnique: vi.fn(),
+  findFirst: vi.fn(),
 } as const;
 
 vi.mock('@/lib/server/prisma/prisma', () => ({
@@ -107,7 +107,7 @@ describe('product repository equivalence', () => {
   beforeEach(async () => {
     const mock = await getPrismaMock();
     mock.findMany.mockClear();
-    mock.findUnique.mockClear();
+    mock.findFirst.mockClear();
   });
 
   it('compares list() output between StaticProductRepository and PrismaProductRepository', async () => {
@@ -198,7 +198,7 @@ describe('product repository equivalence', () => {
 
   it('compares getById() output for static product IDs', async () => {
     const prismaMock = await getPrismaMock();
-    prismaMock.findUnique.mockImplementation(async ({ where }: { where: { id?: string; slug?: string } }) => {
+    prismaMock.findFirst.mockImplementation(async ({ where }: { where: { id?: string; slug?: string } }) => {
       const productId = where.id ?? where.slug;
       const product = PRODUCTS.find((p) => p.id === productId);
       return product ? buildPrismaRow(product) : null;

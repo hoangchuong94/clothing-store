@@ -28,3 +28,5 @@
 - Không import Prisma vào component UI.
 - Product catalog đi qua repository layer.
 - Route public-facing luôn có prefix locale.
+- Auth hardening hiện nằm ở server layer: shared credentials verification, AuthRateLimitBucket, JWT session status re-check và role guards.
+- API routes không được proxy bảo vệ; endpoint nội bộ hiện có phải tự check session/role như metrics route.

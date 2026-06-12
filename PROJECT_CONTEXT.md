@@ -53,14 +53,15 @@ Schema Prisma có nhiều model commerce như `Order`, `Payment`, `Coupon`, `Shi
 | Admin dashboard shell | `(admin)/layout.tsx`, `(admin)/dashboard/page.tsx` |
 | Seed dữ liệu | `prisma/seed.ts`, `prisma/seed/catalog-constants.ts` |
 | Unit tests | Vitest config và các `*.test.ts` hiện có |
+| Auth hardening | Login validation, auth rate limiting, session revocation, protected metrics |
 
 ## Đang triển khai / chưa hoàn chỉnh
 
 | Khu vực | Ghi chú |
 |---------|--------|
 | Prisma-backed catalog rollout | Có `PRODUCT_REPOSITORY_MODE`, repository factory và metrics |
-| Product repository metrics | Có endpoint nội bộ và metrics module |
-| Production hardening | Nhiều item nằm trong `docs/planning/REFACTOR_PLAN.md` |
+| Product repository metrics | Có endpoint nội bộ, metrics module và role protection |
+| Production hardening | Auth hardening đã hoàn tất; còn các finding medium/low được ghi dưới đây |
 | Admin | Chỉ có dashboard placeholder, chưa có CRUD |
 
 ## Chưa triển khai
@@ -115,7 +116,10 @@ Các model runtime đang dùng nhiều nhất: `User`, `Account`, `Session`, `Em
 - Edge-safe config: `src/features/auth/server/auth-edge.config.ts`.
 - Proxy wrapper: `src/features/auth/server/auth-edge.ts`.
 - JWT session strategy.
-- Credentials login yêu cầu email verified.
+- Credentials login yêu cầu user active, có password/role và email verified.
+- Credentials verification đi qua `verifyCredentialsLogin()`, được dùng bởi cả `loginWithCredentials` và Auth.js Credentials `authorize()`.
+- Auth rate limiting dùng `AuthRateLimitBucket` với HMAC key hash và PostgreSQL atomic upsert.
+- Full server `auth()` re-check database `User.status`; `BANNED` và `INACTIVE` sessions bị invalidated.
 - OAuth providers chỉ bật khi env vars tồn tại.
 
 ## Internationalization
@@ -181,19 +185,34 @@ Edge entrypoint cho next-intl middleware và auth redirects. File này skip `/ap
 
 ## Auth
 
-Đã có registration, credentials login, optional OAuth, JWT session và email verification. Verification token được hash và consume single-use. Resend verification có rate limit.
+Đã có registration, credentials login, optional OAuth, JWT session và email verification. Verification token được hash và consume single-use.
 
-Khoảng trống: chưa có rate limit login/register tổng quát; scope/role chưa được enforce rộng rãi trong server actions ngoài dashboard guard.
+Auth hardening hiện đã có:
+
+- `LoginSchema.safeParse` trong login server action.
+- Shared `verifyCredentialsLogin()` cho login action và Auth.js Credentials `authorize()`.
+- Rate limiting cho login/register/resend verification theo IP và email.
+- PostgreSQL atomic rate limiting qua `INSERT ... ON CONFLICT ... DO UPDATE ... RETURNING`.
+- HMAC hash cho email/IP rate-limit key.
+- Reset `LOGIN_EMAIL` khi login thành công; không reset `LOGIN_IP`.
+- Compensate `LOGIN_EMAIL` khi password đúng nhưng email chưa verified.
+- Session revocation cho `BANNED` và `INACTIVE` qua JWT callback DB re-check.
+
+Khoảng trống auth review (SEC-*): xem [docs/reviews/SECURITY_REVIEW.md](./docs/reviews/SECURITY_REVIEW.md) §3. Issue tracked OI-*: [docs/planning/OPEN_ISSUES.md](./docs/planning/OPEN_ISSUES.md).
 
 ## Products
 
 Đã có static catalog, Prisma repository, repository factory và filter server-side sau khi đọc full list. App-level ID là slug `prod-00x`.
 
-Khoảng trống: list Prisma chưa filter soft-delete; filter chưa push xuống DB; product audit/smoke scripts còn thiếu.
+Public reads trong `PrismaProductRepository` hiện filter `deletedAt: null` cho list/get/getByIds.
+
+Khoảng trống: filter chưa push xuống DB; product audit/smoke scripts còn thiếu.
 
 ## Cart
 
 Guest cart dùng Redux + localStorage. Authenticated cart dùng Redux optimistic UI và `UserServerCart` JSON. Login sync merge guest cart vào server cart.
+
+`MergeCartSchema` chỉ nhận `{ guestCart }`; server lấy ownership từ authenticated session và không tin `userId` client.
 
 Khoảng trống: chưa có `/cart` page; normalized `CartItem` model chưa dùng runtime; checkout chưa wired.
 
@@ -240,16 +259,32 @@ Không commit secret và không đưa secret server-only vào biến `NEXT_PUBLI
 
 ---
 
+# Auth Hardening Status
+
+Completed:
+
+- Login validation
+- Auth rate limit infrastructure
+- Login rate limit
+- Register rate limit
+- Resend verification rate limit
+- Session revocation
+- Metrics API protection
+- Product soft delete filtering
+- Cart ownership hardening
+
+**Open work (SSOT):** [docs/planning/OPEN_ISSUES.md](./docs/planning/OPEN_ISSUES.md) — mọi issue `OI-*` đang mở.
+
+**Auth review follow-ups (ngoài OI list):** [docs/reviews/SECURITY_REVIEW.md](./docs/reviews/SECURITY_REVIEW.md) §3 (`SEC-01` … `SEC-04`).
+
+---
+
 # Ưu tiên hiện tại
 
-Các ưu tiên đã được tổng hợp trong `docs/planning/REFACTOR_PLAN.md`:
-
-- Sửa auth server barrel/export bị lệch.
-- Bảo vệ metrics API nội bộ.
-- Rà soát API routes vì proxy skip `/api/*`.
-- Giảm duplicate full catalog reads.
-- Thêm server-side Zod validation cho login action.
-- Thống nhất access control và route constants.
+- **Issue đang mở:** [docs/planning/OPEN_ISSUES.md](./docs/planning/OPEN_ISSUES.md)
+- **Lộ trình:** [docs/planning/ROADMAP.md](./docs/planning/ROADMAP.md)
+- **Epic / backlog:** [docs/planning/REFACTOR_PLAN.md](./docs/planning/REFACTOR_PLAN.md)
+- **AI reading paths:** [docs/INDEX.md](./docs/INDEX.md)
 
 ---
 
@@ -270,6 +305,8 @@ Các ưu tiên đã được tổng hợp trong `docs/planning/REFACTOR_PLAN.md`
 - [README.md](./README.md)
 - [AGENTS.md](./AGENTS.md)
 - [AI_RULES.md](./AI_RULES.md)
+- [docs/INDEX.md](./docs/INDEX.md)
+- [docs/planning/OPEN_ISSUES.md](./docs/planning/OPEN_ISSUES.md)
 - [docs/planning/PROJECT_ANALYSIS.md](./docs/planning/PROJECT_ANALYSIS.md)
 - [docs/planning/REFACTOR_PLAN.md](./docs/planning/REFACTOR_PLAN.md)
 - [docs/reviews/REVIEW_RULES.md](./docs/reviews/REVIEW_RULES.md)

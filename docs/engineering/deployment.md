@@ -10,6 +10,12 @@
 | `AUTH_SECRET` | Secret cho Auth.js |
 | `NEXT_PUBLIC_BASE_URL` | Base URL public |
 
+## Biến môi trường bảo mật khuyến nghị
+
+| Biến | Vai trò |
+|------|---------|
+| `AUTH_RATE_LIMIT_SECRET` | Secret HMAC riêng cho auth rate-limit email/IP keys; nếu thiếu sẽ fallback sang `AUTH_SECRET` |
+
 ## Biến môi trường thường dùng
 
 - `APP_URL` / `NEXT_PUBLIC_APP_URL` cho email link.
@@ -26,3 +32,6 @@
 - Chạy `pnpm build`.
 - Đảm bảo secret không nằm trong client bundle hoặc repository.
 - Bảo vệ mọi API route nội bộ nếu bật ở production.
+- Xác nhận `/api/internal/runtime/product-repository` chỉ truy cập được bởi `ADMIN` hoặc `SUPER_ADMIN`.
+- Xác nhận migration `auth_rate_limit_buckets` đã được áp dụng trước khi bật auth flows production.
+- Xác nhận `AUTH_SECRET` hoặc `AUTH_RATE_LIMIT_SECRET` đã được cấu hình để HMAC hash email/IP rate-limit keys.

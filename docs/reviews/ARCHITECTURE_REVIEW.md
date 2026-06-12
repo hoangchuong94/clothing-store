@@ -56,6 +56,9 @@ Các layer chính:
 - Credentials login yêu cầu active user, password, role và verified email.
 - Verification token được hash và single-use.
 - `/dashboard` có guard role trong server layout.
+- Credentials flow dùng shared `verifyCredentialsLogin()` cho cả server action và Auth.js Credentials provider.
+- Auth rate limiting đã có cho login/register/resend verification.
+- Full server `auth()` invalidates sessions của user không `ACTIVE`.
 
 Khoảng trống:
 
@@ -74,7 +77,7 @@ Khoảng trống:
 Khoảng trống:
 
 - Filter đang chạy sau khi đọc full catalog.
-- Prisma `list()` over-fetch và chưa filter `deletedAt`.
+- Prisma `list()` over-fetch; public reads hiện đã filter `deletedAt: null`.
 - `AUTO` fallback chỉ ở init, cần quan sát rõ khi production.
 
 ## Cart
@@ -84,6 +87,7 @@ Khoảng trống:
 - Server actions re-derive product data.
 - Guest cart và authenticated cart được tách rõ.
 - Login sync merge cart qua server.
+- Merge cart không nhận/tin `userId` từ client; ownership lấy từ session.
 
 Khoảng trống:
 
@@ -150,12 +154,12 @@ Khoảng trống:
 - **Mô tả:** Filter sau full-list read chưa phù hợp khi catalog lớn.
 - **Khuyến nghị:** Cache request-level trước, sau đó đẩy filter/pagination xuống repository.
 
-### AR-07 — Metrics API nội bộ chưa có auth
+### AR-07 — Metrics API nội bộ đã được bảo vệ
 
-- **Severity:** High
+- **Severity:** Closed
 - **File Path:** `src/app/api/internal/runtime/product-repository/route.ts`
-- **Mô tả:** Endpoint metrics dựa vào flag enabled/disabled.
-- **Khuyến nghị:** Thêm session/role check hoặc secret header.
+- **Mô tả:** Endpoint metrics hiện yêu cầu session và role `ADMIN` hoặc `SUPER_ADMIN`; flag enabled/disabled chỉ còn điều khiển report availability.
+- **Khuyến nghị:** Giữ policy này cho các internal API mới.
 
 ### AR-08 — Drift i18n navigation
 

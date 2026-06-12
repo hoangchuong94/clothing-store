@@ -116,7 +116,7 @@ export function useCartAuthSync(): void {
         const shouldMergeGuest = isLoginTransition && guestCart.length > 0;
 
         const response = shouldMergeGuest
-          ? await mergeCart({ guestCart, userId })
+          ? await mergeCart({ guestCart })
           : await getUserServerCart();
 
         if (response.success && response.data) {

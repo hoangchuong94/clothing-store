@@ -24,6 +24,20 @@ Tài liệu này tóm tắt các luồng dữ liệu chính của ứng dụng.
 
 ## Xác thực
 
-1. Credentials flow validate ở server action rồi gọi Auth.js `signIn`.
-2. Auth.js tạo JWT session.
-3. Edge proxy dùng cấu hình edge-safe để redirect các route cần login hoặc cần verified email.
+1. Credentials flow validate bằng `LoginSchema.safeParse`.
+2. Shared `verifyCredentialsLogin()` reserve `LOGIN_IP`, reserve `LOGIN_EMAIL`, rồi mới query user và chạy `bcrypt.compare`.
+3. Login success reset `LOGIN_EMAIL`; `LOGIN_IP` không reset.
+4. Browser client gọi Auth.js `signIn('credentials')` để tạo JWT session.
+5. Auth.js Credentials `authorize()` cũng dùng `verifyCredentialsLogin()`, nên direct credentials POST không bypass rate limit.
+6. Full server `auth()` re-check database `User.status` trong JWT callback; `BANNED`/`INACTIVE` sessions bị invalidated.
+7. Edge proxy dùng cấu hình edge-safe để redirect các route cần login hoặc cần verified email; server guards/actions vẫn là enforcement cuối cùng cho trạng thái user.
+
+## Rate limiting auth
+
+Auth rate limit lưu trong `AuthRateLimitBucket`:
+
+- Key email/IP được HMAC hash thành `keyHash`.
+- Atomic reservation dùng PostgreSQL `INSERT ... ON CONFLICT ("action", "keyHash") DO UPDATE ... RETURNING`.
+- Login dùng `LOGIN_IP` và `LOGIN_EMAIL`.
+- Register dùng `REGISTER_IP` và `REGISTER_EMAIL`.
+- Resend verification dùng `RESEND_VERIFICATION_IP` và `RESEND_VERIFICATION_EMAIL`.

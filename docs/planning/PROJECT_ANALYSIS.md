@@ -105,17 +105,25 @@ Nguyên tắc chính: server không tin price/name/image/stock từ client.
 ## Credentials
 
 1. Client submit form.
-2. `loginWithCredentials` kiểm tra input và user.
-3. Client gọi `signIn('credentials', { redirect: false })`.
-4. Auth.js tạo JWT session.
+2. `loginWithCredentials` validate bằng `LoginSchema.safeParse`.
+3. Shared `verifyCredentialsLogin()` reserve `LOGIN_IP`, reserve `LOGIN_EMAIL`, rồi mới query user và chạy `bcrypt.compare`.
+4. Success reset `LOGIN_EMAIL`, không reset `LOGIN_IP`.
+5. Client gọi `signIn('credentials', { redirect: false })`.
+6. Auth.js Credentials `authorize()` cũng dùng `verifyCredentialsLogin()`.
+7. Auth.js tạo JWT session.
 
 ## Registration và verification
 
 1. `registerUser` validate bằng Zod.
-2. Password được hash.
-3. Verification token được generate và hash trước khi lưu.
-4. Email link trỏ tới confirm page.
-5. Confirm page chỉ verify sau hành động của người dùng.
+2. Server reserve `REGISTER_IP` rồi `REGISTER_EMAIL`.
+3. Password được hash.
+4. Verification token được generate và hash trước khi lưu.
+5. Email link trỏ tới confirm page.
+6. Confirm page chỉ verify sau hành động của người dùng.
+
+Resend verification validate input, reserve `RESEND_VERIFICATION_IP`, reserve `RESEND_VERIFICATION_EMAIL`, check cooldown, rồi gửi email nếu user hợp lệ.
+
+Full server `auth()` re-check `User.status`; `BANNED` và `INACTIVE` existing sessions bị invalidated.
 
 ## OAuth
 
@@ -192,7 +200,7 @@ Runtime hiện chủ yếu dùng auth, catalog và `UserServerCart`. Orders/paym
 
 - Feature boundaries rõ.
 - Product repository abstraction giúp rollout static → Prisma.
-- Auth token verification có baseline tốt.
+- Auth token verification và session revocation có baseline tốt.
 - Cart server actions không tin dữ liệu nhạy cảm từ client.
 - Locale routing được cấu hình nhất quán.
 - Có unit tests cho một số logic trọng yếu.
@@ -208,6 +216,7 @@ Runtime hiện chủ yếu dùng auth, catalog và `UserServerCart`. Orders/paym
 - Client boundary ở home/shop còn rộng.
 - Một số docs/scripts bị drift.
 - Chưa có E2E/integration coverage rộng.
+- OAuth email verification semantics và register enumeration còn là policy/risk cần quyết định.
 
 ---
 
@@ -224,8 +233,8 @@ Runtime hiện chủ yếu dùng auth, catalog và `UserServerCart`. Orders/paym
 | TD-07 | Đưa hardcoded strings vào messages | Thấp |
 | TD-08 | Observability cho repository fallback | Trung bình |
 | TD-09 | Thống nhất session helper | Thấp |
-| TD-10 | Bảo vệ internal metrics API | Cao |
-| TD-11 | Rate limit login/register/cart | Cao |
+| TD-10 | Đã xử lý: bảo vệ internal metrics API bằng session role | Đã xong |
+| TD-11 | Đã xử lý auth rate limit login/register/resend; cart rate limit vẫn là follow-up | Trung bình |
 | TD-12 | Tách client-heavy layout | Trung bình |
 | TD-13 | Sửa script/doc drift | Trung bình |
 | TD-14 | Backfill docs còn thiếu | Thấp |
@@ -236,10 +245,14 @@ Runtime hiện chủ yếu dùng auth, catalog và `UserServerCart`. Orders/paym
 
 ## 15. Tài liệu liên quan
 
-- `AGENTS.md`
-- `AI_RULES.md`
-- `PROJECT_CONTEXT.md`
-- `docs/planning/REFACTOR_PLAN.md`
-- `docs/reviews/ARCHITECTURE_REVIEW.md`
-- `docs/reviews/SECURITY_REVIEW.md`
-- `docs/reviews/PERFORMANCE_REVIEW.md`
+- [docs/INDEX.md](../INDEX.md)
+- [OPEN_ISSUES.md](./OPEN_ISSUES.md)
+- [ROADMAP.md](./ROADMAP.md)
+- [AGENTS.md](../../AGENTS.md)
+- [AI_RULES.md](../../AI_RULES.md)
+- [PROJECT_CONTEXT.md](../../PROJECT_CONTEXT.md)
+- [REFACTOR_PLAN.md](./REFACTOR_PLAN.md)
+- [docs/reviews/FULL_PROJECT_REVIEW.md](../reviews/FULL_PROJECT_REVIEW.md)
+- [docs/reviews/ARCHITECTURE_REVIEW.md](../reviews/ARCHITECTURE_REVIEW.md)
+- [docs/reviews/SECURITY_REVIEW.md](../reviews/SECURITY_REVIEW.md)
+- [docs/reviews/PERFORMANCE_REVIEW.md](../reviews/PERFORMANCE_REVIEW.md)

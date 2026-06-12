@@ -1,24 +1,19 @@
-import { verificationConfig } from './config';
+import { RESEND_VERIFICATION_COOLDOWN_SECONDS } from '../rate-limit/config';
 
-export type ResendRateLimitResult =
+export type ResendCooldownResult =
   | { allowed: true }
-  | { allowed: false; reason: 'COOLDOWN'; retryAfterSeconds: number }
-  | { allowed: false; reason: 'HOURLY_LIMIT' };
+  | { allowed: false; reason: 'COOLDOWN'; retryAfterSeconds: number };
 
-interface ResendState {
+interface ResendCooldownState {
   verificationResendAt: Date | null;
-  verificationResendCount: number;
-  verificationResendWindowStart: Date | null;
 }
 
-const HOUR_MS = 60 * 60 * 1000;
-
-export function checkResendRateLimit(
-  state: ResendState,
+export function checkResendCooldown(
+  state: ResendCooldownState,
   now: Date = new Date(),
-): ResendRateLimitResult {
+): ResendCooldownResult {
   if (state.verificationResendAt) {
-    const cooldownMs = verificationConfig.resendCooldownMinutes * 60 * 1000;
+    const cooldownMs = RESEND_VERIFICATION_COOLDOWN_SECONDS * 1000;
     const elapsed = now.getTime() - state.verificationResendAt.getTime();
     if (elapsed < cooldownMs) {
       return {
@@ -29,40 +24,13 @@ export function checkResendRateLimit(
     }
   }
 
-  const count = state.verificationResendCount;
-  const windowStart = state.verificationResendWindowStart;
-
-  if (!windowStart || now.getTime() - windowStart.getTime() >= HOUR_MS) {
-    return { allowed: true };
-  }
-
-  if (count >= verificationConfig.maxResendsPerHour) {
-    return { allowed: false, reason: 'HOURLY_LIMIT' };
-  }
-
   return { allowed: true };
 }
 
-export function nextResendState(
-  state: ResendState,
+export function nextResendCooldownState(
   now: Date = new Date(),
-): Pick<
-  ResendState,
-  'verificationResendAt' | 'verificationResendCount' | 'verificationResendWindowStart'
-> {
-  let count = state.verificationResendCount;
-  let windowStart = state.verificationResendWindowStart;
-
-  if (!windowStart || now.getTime() - windowStart.getTime() >= HOUR_MS) {
-    windowStart = now;
-    count = 1;
-  } else {
-    count += 1;
-  }
-
+): Pick<ResendCooldownState, 'verificationResendAt'> {
   return {
     verificationResendAt: now,
-    verificationResendCount: count,
-    verificationResendWindowStart: windowStart,
   };
 }
