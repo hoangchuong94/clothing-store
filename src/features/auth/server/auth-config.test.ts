@@ -147,7 +147,7 @@ describe('Auth.js credentials authorize rate limiting', () => {
       retryAfterSeconds: 60,
     });
 
-    const result = await credentialsProvider().authorize(
+    const result = await credentialsProvider().authorize!(
       {
         email: 'user@example.com',
         password: 'Password123!',
@@ -171,7 +171,7 @@ describe('Auth.js credentials authorize rate limiting', () => {
       .mockResolvedValueOnce({ allowed: true })
       .mockResolvedValueOnce({ allowed: false, reason: 'BLOCKED', retryAfterSeconds: 60 });
 
-    const result = await credentialsProvider().authorize(
+    const result = await credentialsProvider().authorize!(
       {
         email: 'user@example.com',
         password: 'Password123!',
@@ -210,7 +210,7 @@ describe('Auth.js credentials authorize rate limiting', () => {
     });
     bcryptMock.compare.mockResolvedValue(true);
 
-    const result = await credentialsProvider().authorize(
+    const result = await credentialsProvider().authorize!(
       {
         email: 'user@example.com',
         password: 'Password123!',
@@ -248,7 +248,7 @@ describe('Auth.js credentials authorize rate limiting', () => {
     });
     bcryptMock.compare.mockResolvedValue(true);
 
-    const result = await credentialsProvider().authorize(
+    const result = await credentialsProvider().authorize!(
       {
         email: 'user@example.com',
         password: 'Password123!',
@@ -279,7 +279,7 @@ describe('Auth.js credentials authorize rate limiting', () => {
     });
     bcryptMock.compare.mockResolvedValue(true);
 
-    await credentialsProvider().authorize(
+    await credentialsProvider().authorize!(
       {
         email: 'user@example.com',
         password: 'Password123!',
